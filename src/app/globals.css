@@ -23,6 +23,6 @@ body {
   min-height: 100dvh;
 }
 
-main {
-  padding: 2rem;
+body {
+  overflow: hidden;
 }
