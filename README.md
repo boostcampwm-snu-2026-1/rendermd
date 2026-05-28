@@ -37,18 +37,44 @@ Rationale: [docs/proposal.md](./docs/proposal.md)
 - [Week 1 retrospective](./docs/retrospective.md)
 - [Contributing guide](./CONTRIBUTING.md)
 
-## Screenshots
+## Demo
 
-> Populated from week 2 onward by the verifier agent (see [workflow.md §3](./docs/workflow.md)) as features land on `main`. Gallery: [`docs/screenshots/`](./docs/screenshots/).
+### User flow
 
-| Theme         | Desktop                                                | Mobile                                               |
-| ------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| Light         | ![light-desktop](./docs/screenshots/light-desktop.png) | ![light-mobile](./docs/screenshots/light-mobile.png) |
-| Dark          | ![dark-desktop](./docs/screenshots/dark-desktop.png)   | ![dark-mobile](./docs/screenshots/dark-mobile.png)   |
-| Sepia         | ![sepia-desktop](./docs/screenshots/sepia-desktop.png) | ![sepia-mobile](./docs/screenshots/sepia-mobile.png) |
-| High contrast | ![hc-desktop](./docs/screenshots/hc-desktop.png)       | ![hc-mobile](./docs/screenshots/hc-mobile.png)       |
+```mermaid
+flowchart LR
+    A([Paste LLM<br/>response]) --> B[Markdown editor<br/>left pane]
+    B --> C[Live preview<br/>right pane]
+    C --> D{Tweak<br/>theme?}
+    D -->|yes| E[light / dark /<br/>sepia / HC]
+    E --> C
+    D -->|no| F[Click<br/>Export PDF]
+    F --> G[Browser print<br/>dialog]
+    G --> H([Save as PDF])
+```
 
-PDF export examples land in [`docs/screenshots/pdf/`](./docs/screenshots/pdf/) (PNG previews + raw PDFs).
+### Layout sketches
+
+```
+Desktop (≥ 768px)
+┌──────────────────────────────────────────────────────────┐
+│ rendermd                  [Theme ▾] [💾 Saved] [📄 PDF]  │
+├──────────────────────────┬───────────────────────────────┤
+│  Markdown input          │   Live preview                │
+│  (CodeMirror 6)          │   (react-markdown)            │
+└──────────────────────────┴───────────────────────────────┘
+
+Mobile (< 768px)
+┌─────────────────────────────┐
+│ rendermd  [Theme] [📄 PDF]  │
+├─────────────────────────────┤
+│ [ Edit │ Preview ]          │
+├─────────────────────────────┤
+│  Current tab content        │
+└─────────────────────────────┘
+```
+
+> Real screenshots and a screen capture GIF replace these sketches once the UI lands in week 2. See [`docs/screenshots/`](./docs/screenshots/) for the gallery convention.
 
 ## Branch strategy
 
