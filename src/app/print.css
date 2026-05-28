@@ -33,6 +33,12 @@
     display: none !important;
   }
 
+  /* Print should always show the preview content, even if the mobile tab
+     state has it hidden. */
+  [data-print='target'][data-tab-active='false'] {
+    display: block !important;
+  }
+
   [data-print='target'] {
     padding: 0 !important;
     overflow: visible !important;

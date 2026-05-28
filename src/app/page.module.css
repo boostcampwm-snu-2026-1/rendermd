@@ -1,6 +1,6 @@
 .app {
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
@@ -13,6 +13,8 @@
   padding: 0.5rem 1rem;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .title {
@@ -26,6 +28,7 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .layout {
@@ -47,4 +50,27 @@
   min-width: 0;
   background: var(--bg);
   color: var(--fg);
+}
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .editor {
+    border-right: none;
+  }
+
+  .editor[data-tab-active='false'],
+  .preview[data-tab-active='false'] {
+    display: none;
+  }
+
+  .preview {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
 }
