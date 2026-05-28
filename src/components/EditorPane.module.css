@@ -1,0 +1,15 @@
+.wrapper {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper :global(.cm-editor) {
+  height: 100%;
+  font-size: 14px;
+}
+
+.wrapper :global(.cm-scroller) {
+  font-family: ui-monospace, 'SF Mono', Menlo, Monaco, 'Cascadia Mono', monospace;
+}
