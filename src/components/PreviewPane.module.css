@@ -207,3 +207,58 @@
 .article :global(.katex) {
   font-size: 1.05em;
 }
+
+/* GFM footnotes — remark-gfm emits <section class="footnotes"> at the end
+   with backref <sup>s pointing to <a> anchors. Style as a quiet appendix. */
+.article :global(.footnotes) {
+  margin-top: var(--space-8);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  font-size: 0.92em;
+  color: var(--fg-muted);
+}
+
+.article :global(.footnotes ol) {
+  padding-left: 1.25rem;
+}
+
+.article :global(sup) {
+  font-size: 0.8em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  top: -0.5em;
+}
+
+/* kbd, mark, dl/dt/dd — occasionally emitted; basic restraint. */
+.article :global(kbd) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  padding: 0.05em 0.4em;
+  color: var(--fg);
+}
+
+.article :global(mark) {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: inherit;
+  padding: 0.05em 0.2em;
+  border-radius: var(--radius-sm);
+}
+
+.article :global(dl) {
+  margin: var(--space-3) 0;
+}
+
+.article :global(dt) {
+  font-weight: 600;
+  margin-top: var(--space-3);
+}
+
+.article :global(dd) {
+  margin-left: var(--space-5);
+  color: var(--fg-muted);
+}

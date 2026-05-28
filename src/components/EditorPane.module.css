@@ -32,7 +32,8 @@
   background: var(--bg-subtle);
 }
 
-[data-theme='dark'] .wrapper :global(.cm-gutters),
-[data-theme='dark'] .wrapper :global(.cm-editor) {
-  background: var(--bg);
-}
+/*
+ * In dark mode the editor uses CodeMirror's oneDark theme, which themes its
+ * own surfaces. Overriding cm-editor / cm-gutters here would create a seam
+ * between the gutter and the editor body — let oneDark be authoritative.
+ */

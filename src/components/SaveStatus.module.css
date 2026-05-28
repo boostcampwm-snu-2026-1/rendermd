@@ -52,8 +52,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Don't rotate; pulse opacity instead so a frozen Loader icon doesn't
+     misread as "done". Much gentler than rotation. */
   .spin {
-    animation: none;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
   }
 }
 
