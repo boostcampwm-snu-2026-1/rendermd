@@ -1,6 +1,7 @@
 'use client';
 
 import { EditorPane } from '@/components/EditorPane';
+import { ExportButton } from '@/components/ExportButton';
 import { PreviewPane } from '@/components/PreviewPane';
 import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -28,7 +29,7 @@ function greet(name: string) {
 }
 \`\`\`
 
-> Your draft autosaves to this browser. PDF export and mobile tabs land in the next PRs.
+> Click **Export PDF** to print the preview. Your draft autosaves to this browser.
 `;
 
 export default function Home() {
@@ -37,19 +38,20 @@ export default function Home() {
   const isDark = theme === 'dark';
 
   return (
-    <div className={styles.app}>
-      <header className={styles.header}>
+    <div className={styles.app} data-app>
+      <header className={styles.header} data-print="hide">
         <h1 className={styles.title}>rendermd</h1>
         <div className={styles.toolbar}>
           <SaveStatusIndicator status={status} />
           <ThemeSwitcher />
+          <ExportButton />
         </div>
       </header>
-      <main className={styles.layout}>
-        <section className={styles.editor} aria-label="Markdown editor">
+      <main className={styles.layout} data-app-main>
+        <section className={styles.editor} aria-label="Markdown editor" data-print="hide">
           <EditorPane value={value} onChange={setValue} dark={isDark} />
         </section>
-        <section className={styles.preview} aria-label="Preview">
+        <section className={styles.preview} aria-label="Preview" data-print="target">
           <PreviewPane markdown={value} />
         </section>
       </main>
