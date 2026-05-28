@@ -55,6 +55,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
+        {/*
+         * ErrorBoundary deliberately sits OUTSIDE ThemeProvider: if the
+         * provider itself throws, the fallback still renders with sensible
+         * colors because the inline script above has already applied
+         * [data-theme] on <html> before React mounts. The fallback CSS vars
+         * resolve against that.
+         */}
         <ErrorBoundary>
           <ThemeProvider>{children}</ThemeProvider>
         </ErrorBoundary>

@@ -70,9 +70,17 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
   }, []);
 
   // Synchronous flush — used by event handlers that may be the last chance
-  // before the page unloads.
+  // before the page unloads. Also doubles as the manual-save entry point
+  // (Cmd/Ctrl+S) — if nothing is pending we still flip 'saving' → 'saved'
+  // briefly so the user gets visible confirmation that their explicit
+  // action was acknowledged.
   const flushPending = useCallback(() => {
-    if (!hasPendingWriteRef.current) return;
+    if (!hasPendingWriteRef.current) {
+      // No pending write, but flip status to give explicit-save feedback.
+      setStatus('saving');
+      window.setTimeout(() => setStatus('saved'), 120);
+      return;
+    }
     if (timerRef.current !== null) {
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
