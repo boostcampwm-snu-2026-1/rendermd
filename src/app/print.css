@@ -1,0 +1,61 @@
+/*
+ * Print stylesheet — converts the editor/preview SPA into a single column
+ * of rendered markdown only. Driven by data-print attributes on the page
+ * elements so it survives CSS Modules class name hashing.
+ */
+
+@media print {
+  @page {
+    margin: 20mm;
+  }
+
+  html,
+  body {
+    background: var(--bg) !important;
+    color: var(--fg) !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  [data-app] {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  [data-app-main] {
+    display: block !important;
+    grid-template-columns: none !important;
+    height: auto !important;
+  }
+
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  [data-print='target'] {
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    border: none !important;
+  }
+
+  [data-print='target'] article {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* Avoid splitting headings from their following content. */
+  [data-print='target'] :is(h1, h2, h3, h4) {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Keep code blocks together when possible. */
+  [data-print='target'] pre,
+  [data-print='target'] blockquote,
+  [data-print='target'] table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

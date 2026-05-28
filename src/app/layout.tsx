@@ -3,6 +3,7 @@ import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/github.css';
 import './globals.css';
 import './themes.css';
+import './print.css';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export const metadata: Metadata = {
