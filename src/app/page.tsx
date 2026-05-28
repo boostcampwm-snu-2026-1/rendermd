@@ -15,13 +15,10 @@ import styles from './page.module.css';
 // CodeMirror is ~200 kB; dynamic-import + ssr:false keeps it off the initial
 // First-Load JS. PreviewPane stays eager — paste-and-export needs the
 // rendered output immediately on first paint.
-const EditorPane = dynamic(
-  () => import('@/components/EditorPane').then((m) => ({ default: m.EditorPane })),
-  {
-    ssr: false,
-    loading: () => <EditorPaneLoader />,
-  },
-);
+const EditorPane = dynamic(() => import('@/components/EditorPane').then((m) => m.EditorPane), {
+  ssr: false,
+  loading: () => <EditorPaneLoader />,
+});
 
 const DEFAULT_VALUE = `# Welcome to rendermd
 
