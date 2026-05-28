@@ -1,7 +1,7 @@
 .article {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.65;
-  color: #222;
+  color: var(--fg);
   max-width: 72ch;
   margin: 0 auto;
 }
@@ -9,7 +9,7 @@
 .article :global(h1) {
   font-size: 2rem;
   margin: 1.5rem 0 1rem;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.4rem;
 }
 
@@ -38,15 +38,15 @@
 }
 
 .article :global(blockquote) {
-  border-left: 4px solid #d0d0d0;
+  border-left: 4px solid var(--border-strong);
   margin: 0.8rem 0;
   padding: 0.2rem 1rem;
-  color: #555;
-  background: #fafafa;
+  color: var(--fg-muted);
+  background: var(--bg-blockquote);
 }
 
 .article :global(code) {
-  background: #f4f4f4;
+  background: var(--bg-code);
   padding: 0.1em 0.35em;
   border-radius: 3px;
   font-family: ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
@@ -54,8 +54,8 @@
 }
 
 .article :global(pre) {
-  background: #fafafa;
-  border: 1px solid #eaeaea;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.8rem 1rem;
   overflow-x: auto;
@@ -69,7 +69,7 @@
 }
 
 .article :global(a) {
-  color: #0366d6;
+  color: var(--link);
   text-decoration: none;
 }
 
@@ -85,13 +85,13 @@
 
 .article :global(th),
 .article :global(td) {
-  border: 1px solid #d0d0d0;
+  border: 1px solid var(--border-strong);
   padding: 0.4rem 0.6rem;
   text-align: left;
 }
 
 .article :global(th) {
-  background: #f4f4f4;
+  background: var(--bg-code);
   font-weight: 600;
 }
 
@@ -102,6 +102,10 @@
 
 .article :global(hr) {
   border: none;
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid var(--border);
   margin: 1.5rem 0;
+}
+
+.article :global(input[type='checkbox']) {
+  margin-right: 0.4em;
 }

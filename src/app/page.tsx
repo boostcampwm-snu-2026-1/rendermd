@@ -13,7 +13,10 @@ Paste an LLM response on the left and watch it render on the right.
 
 - **Bold**, *italic*, and \`inline code\`
 - Lists, tables, blockquotes
-- GitHub-flavored markdown (\`- [ ] tasks\`, ~~strike~~)
+- GFM task lists:
+  - [x] Done
+  - [ ] Todo
+- ~~Strikethrough~~ and other GFM
 - Math via KaTeX: $E = mc^2$
 
 \`\`\`ts
