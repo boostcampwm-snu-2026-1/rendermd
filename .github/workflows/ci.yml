@@ -25,13 +25,14 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm typecheck
+
       - name: Test
         run: pnpm test:run
 
-      # Enable from week 2 once Next.js is set up:
-      # - name: Lint
-      #   run: pnpm lint
-      # - name: Type check
-      #   run: pnpm typecheck
-      # - name: Build
-      #   run: pnpm build
+      - name: Build
+        run: pnpm build
