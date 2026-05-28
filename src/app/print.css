@@ -66,25 +66,43 @@
     border: none !important;
     orphans: 3;
     widows: 3;
+    font-size: 11pt;
+    line-height: 1.5;
   }
 
   [data-print='target'] article {
-    max-width: none !important;
-    margin: 0 !important;
+    /* Keep readable measure on paper. At 20mm margins on A4, this lands
+       around 70 characters per line — book-style measure. */
+    max-width: 38em !important;
+    margin: 0 auto !important;
   }
 
-  /* Avoid splitting headings from their following content. */
-  [data-print='target'] :is(h1, h2, h3, h4) {
+  /*
+   * Heading anti-widow policy:
+   *   1. Headings never split internally and never end a page alone.
+   *   2. The element immediately after ANY heading sticks to it
+   *      (adjacent-sibling combinator +). The previous version only covered
+   *      <p>; real LLM markdown puts lists / code / blockquote right after
+   *      headings, which is what produced the user-reported widow.
+   *   3. Paragraphs and lists right after a heading resist internal breaks
+   *      too, so the heading + first content reads as a unit. pre/blockquote/
+   *      table already get break-inside elsewhere — not duplicated here.
+   */
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) {
     page-break-after: avoid;
     break-after: avoid;
     page-break-inside: avoid;
     break-inside: avoid;
   }
 
-  /* The first paragraph after a heading should travel with it. */
-  [data-print='target'] :is(h1, h2, h3, h4) + p {
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) + * {
     page-break-before: avoid;
     break-before: avoid;
+  }
+
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol) {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   /* Keep code blocks, blockquotes, tables together when possible. */
