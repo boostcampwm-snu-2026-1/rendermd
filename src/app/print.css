@@ -33,6 +33,16 @@
     display: none !important;
   }
 
+  /* Print should always show the preview content, even if the mobile tab
+     state has it hidden. Mobile-tab hiding uses visibility/position, so
+     undo all three. */
+  [data-print='target'][data-tab-active='false'] {
+    display: block !important;
+    position: static !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
   [data-print='target'] {
     padding: 0 !important;
     overflow: visible !important;
