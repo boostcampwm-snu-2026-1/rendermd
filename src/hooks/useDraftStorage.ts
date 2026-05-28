@@ -4,6 +4,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
+/**
+ * Classification of the last save failure so the UI can show a helpful
+ * cause hint instead of a generic "Save failed".
+ */
+export type SaveErrorKind = 'quota' | 'unavailable' | 'unknown';
+
 const STORAGE_KEY = 'rendermd:draft';
 const DEBOUNCE_MS = 500;
 
@@ -11,6 +17,8 @@ interface UseDraftStorageReturn {
   value: string;
   setValue: (next: string) => void;
   status: SaveStatus;
+  /** Populated when status === 'error'; null otherwise. */
+  errorKind: SaveErrorKind | null;
   /** Re-attempt a write that previously failed (e.g. after QuotaExceededError). */
   retry: () => void;
   /** Synchronously commit any pending debounced write (e.g. on Cmd/Ctrl+S). */
@@ -26,12 +34,29 @@ function readStorage(): string | null {
   }
 }
 
-function writeStorage(value: string): boolean {
+interface WriteResult {
+  ok: boolean;
+  errorKind: SaveErrorKind | null;
+}
+
+function classifyError(err: unknown): SaveErrorKind {
+  if (typeof DOMException !== 'undefined' && err instanceof DOMException) {
+    // QuotaExceededError or NS_ERROR_DOM_QUOTA_REACHED (Firefox)
+    if (err.name === 'QuotaExceededError' || err.code === 22) return 'quota';
+    if (err.name === 'SecurityError') return 'unavailable';
+  }
+  return 'unknown';
+}
+
+function writeStorage(value: string): WriteResult {
+  if (typeof localStorage === 'undefined') {
+    return { ok: false, errorKind: 'unavailable' };
+  }
   try {
     localStorage.setItem(STORAGE_KEY, value);
-    return true;
-  } catch {
-    return false;
+    return { ok: true, errorKind: null };
+  } catch (err) {
+    return { ok: false, errorKind: classifyError(err) };
   }
 }
 
@@ -45,6 +70,8 @@ function writeStorage(value: string): boolean {
  *     value here (last-write-wins; the proposal scopes to single-document).
  *   - **retry()**: lets the UI re-attempt a write after a QuotaExceededError
  *     (e.g. the user freed space and clicked "Retry").
+ *   - **errorKind**: classifies the failure so the UI can show a cause
+ *     hint instead of a generic "Save failed".
  *
  * SSR/hydration: returns `fallback` on first render to match the build-time
  * pre-render. After mount, restores from localStorage.
@@ -52,6 +79,7 @@ function writeStorage(value: string): boolean {
 export function useDraftStorage(fallback: string): UseDraftStorageReturn {
   const [value, setValueState] = useState<string>(fallback);
   const [status, setStatus] = useState<SaveStatus>('idle');
+  const [errorKind, setErrorKind] = useState<SaveErrorKind | null>(null);
 
   // Refs hold the latest pending write so handlers (pagehide / unmount) can
   // flush synchronously without going through a render.
@@ -69,6 +97,12 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     }
   }, []);
 
+  const applyWriteResult = useCallback((res: WriteResult) => {
+    hasPendingWriteRef.current = !res.ok;
+    setStatus(res.ok ? 'saved' : 'error');
+    setErrorKind(res.ok ? null : res.errorKind);
+  }, []);
+
   // Synchronous flush — used by event handlers that may be the last chance
   // before the page unloads. Also doubles as the manual-save entry point
   // (Cmd/Ctrl+S) — if nothing is pending we still flip 'saving' → 'saved'
@@ -76,7 +110,6 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
   // action was acknowledged.
   const flushPending = useCallback(() => {
     if (!hasPendingWriteRef.current) {
-      // No pending write, but flip status to give explicit-save feedback.
       setStatus('saving');
       window.setTimeout(() => setStatus('saved'), 120);
       return;
@@ -85,13 +118,9 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
     }
-    const ok = writeStorage(pendingValueRef.current);
-    hasPendingWriteRef.current = false;
-    setStatus(ok ? 'saved' : 'error');
-  }, []);
+    applyWriteResult(writeStorage(pendingValueRef.current));
+  }, [applyWriteResult]);
 
-  // pagehide is the canonical "tab closing" signal in modern browsers.
-  // beforeunload is the older fallback; both fire before storage flushes.
   useEffect(() => {
     const handler = () => flushPending();
     window.addEventListener('pagehide', handler);
@@ -102,14 +131,10 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     };
   }, [flushPending]);
 
-  // Multi-tab: pick up writes from other tabs (storage events don't fire in
-  // the originating tab — only in peers).
   useEffect(() => {
     const handler = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY) return;
       if (e.newValue === null || e.newValue === pendingValueRef.current) return;
-      // Cancel any pending local debounce — a peer tab just wrote a newer
-      // value, and our pending write would clobber it with stale text.
       if (timerRef.current !== null) {
         window.clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -118,13 +143,12 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
       pendingValueRef.current = e.newValue;
       hasPendingWriteRef.current = false;
       setStatus('saved');
+      setErrorKind(null);
     };
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Flush + cleanup on unmount (also covers React StrictMode double-invoke
-  // since flush is idempotent when nothing's pending).
   useEffect(() => {
     return () => {
       flushPending();
@@ -134,28 +158,27 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     };
   }, [flushPending]);
 
-  const setValue = useCallback((next: string) => {
-    setValueState(next);
-    pendingValueRef.current = next;
-    hasPendingWriteRef.current = true;
-    setStatus('saving');
-    if (timerRef.current !== null) {
-      window.clearTimeout(timerRef.current);
-    }
-    timerRef.current = window.setTimeout(() => {
-      timerRef.current = null;
-      const ok = writeStorage(next);
-      hasPendingWriteRef.current = false;
-      setStatus(ok ? 'saved' : 'error');
-    }, DEBOUNCE_MS);
-  }, []);
+  const setValue = useCallback(
+    (next: string) => {
+      setValueState(next);
+      pendingValueRef.current = next;
+      hasPendingWriteRef.current = true;
+      setStatus('saving');
+      if (timerRef.current !== null) {
+        window.clearTimeout(timerRef.current);
+      }
+      timerRef.current = window.setTimeout(() => {
+        timerRef.current = null;
+        applyWriteResult(writeStorage(next));
+      }, DEBOUNCE_MS);
+    },
+    [applyWriteResult],
+  );
 
   const retry = useCallback(() => {
     setStatus('saving');
-    const ok = writeStorage(pendingValueRef.current);
-    hasPendingWriteRef.current = !ok;
-    setStatus(ok ? 'saved' : 'error');
-  }, []);
+    applyWriteResult(writeStorage(pendingValueRef.current));
+  }, [applyWriteResult]);
 
-  return { value, setValue, status, retry, flush: flushPending };
+  return { value, setValue, status, errorKind, retry, flush: flushPending };
 }
