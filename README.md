@@ -7,6 +7,8 @@
 
 A static web tool to preview LLM-generated markdown in real time and save it as a PDF.
 
+> **Live:** <https://boostcampwm-snu-2026-1.github.io/rendermd/>
+
 > Boostcamp Web & Mobile SNU 2026 — solo project (3-week shared track)
 
 ## Development setup
@@ -34,7 +36,7 @@ Rationale: [docs/proposal.md](./docs/proposal.md)
 
 - [Project proposal](./docs/proposal.md)
 - [Workflow draft](./docs/workflow.md)
-- [Week 1 retrospective](./docs/retrospective.md)
+- Retrospectives: [week 1](./docs/retrospective.md), [week 2](./docs/retrospective-week2.md), [week 3](./docs/retrospective-week3.md)
 - [Contributing guide](./CONTRIBUTING.md)
 
 ## Demo
