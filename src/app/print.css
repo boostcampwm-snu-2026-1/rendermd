@@ -10,8 +10,20 @@
  */
 
 @media print {
+  /*
+   * Inset is provided by the *article* (internal padding), not @page.
+   * With @page margin: 20mm, dark-theme exports produced a 20mm white
+   * paper strip around the dark content (browsers paint the page outside
+   * the @page margin with paper color). Users worked around by selecting
+   * "no margins" in the print dialog, which then made content edge-to-edge
+   * with zero breathing room.
+   *
+   * @page margin: 0 lets the themed body color extend to the paper edge,
+   * and article padding gives the prose its reading inset. Same visual
+   * outcome for light theme; eliminates the dark-theme dilemma.
+   */
   @page {
-    margin: 20mm;
+    margin: 0;
   }
 
   /*
@@ -72,14 +84,16 @@
 
   [data-print='target'] article {
     /* Drop the on-screen 68ch reading measure in print: paragraphs still
-       break at the @page margin, but wide tables and code blocks need the
-       full page width or they clip. */
+       have an internal max-width below, but wide tables and code blocks
+       need the full content width.
+       Internal padding replaces @page margin (see top of file). */
     max-width: none !important;
     margin: 0 !important;
+    padding: 18mm 16mm !important;
   }
 
   /* Paragraph-level prose still wants a reading measure — keep one via
-     padding so wide block elements (table, pre) can break out. */
+     max-width so wide block elements (table, pre) can break out. */
   [data-print='target'] :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6) {
     max-width: 38em;
   }
