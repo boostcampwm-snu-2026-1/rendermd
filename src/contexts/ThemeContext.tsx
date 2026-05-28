@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 
 export type Theme = 'light' | 'dark' | 'sepia' | 'hc';
 
@@ -35,11 +35,25 @@ function readInitialTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Lazy initializer reads the theme that the inline script in layout.tsx
-  // already applied to <html> before React mounted. This prevents a
-  // one-frame light → saved-theme flash in components that vary by theme
-  // (CodeMirror in particular).
+  // Lazy initializer is the FAST path — on a normal load the inline head
+  // script has already set data-theme by the time React renders, so the
+  // first paint matches the saved theme with no flash.
   const [theme, setThemeState] = useState<Theme>(readInitialTheme);
+
+  // SAFETY NET: with static export, the SSR build runs without `document`
+  // and bakes `theme='light'` into the HTML. On hydration React preserves
+  // the SSR initial state (the lazy initializer is NOT re-run if the
+  // hydrated tree matches), so without this effect the React state stays
+  // 'light' even when the inline script set <html data-theme='dark'>.
+  // Re-sync on mount.
+  useEffect(() => {
+    const current = document.documentElement.dataset.theme;
+    if (isTheme(current) && current !== theme) {
+      setThemeState(current);
+    }
+    // theme intentionally omitted from deps — only run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
