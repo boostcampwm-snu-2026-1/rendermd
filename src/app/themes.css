@@ -32,6 +32,7 @@
   --accent: #2065d0;
   --accent-fg: #ffffff;
   --danger: #b32616;
+  --warning: #8a5a00; /* amber on white, AA 4.5:1 */
   --success: #157040; /* WCAG AA 4.5:1 vs white */
 }
 
@@ -53,6 +54,7 @@
   --accent: #6ea8ff;
   --accent-fg: #111111;
   --danger: #f85149;
+  --warning: #d9a55a;
   --success: #3fb950;
 }
 
@@ -69,6 +71,7 @@
   --accent: #8a4a1c;
   --accent-fg: #f5edd6;
   --danger: #aa3a1a;
+  --warning: #8a5a00;
   --success: #5a7430;
 }
 
@@ -85,6 +88,7 @@
   --accent: #0000ee;
   --accent-fg: #ffffff;
   --danger: #cc0000;
+  --warning: #663300;
   --success: #006600;
 }
 

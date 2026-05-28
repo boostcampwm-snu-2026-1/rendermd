@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertCircle, Check, Loader, RotateCcw } from 'lucide-react';
-import type { SaveStatus as Status } from '@/hooks/useDraftStorage';
+import type { SaveErrorKind, SaveStatus as Status } from '@/hooks/useDraftStorage';
 import styles from './SaveStatus.module.css';
 
 const LABELS: Record<Status, string> = {
@@ -11,8 +11,15 @@ const LABELS: Record<Status, string> = {
   error: 'Save failed',
 };
 
+const ERROR_HINT: Record<SaveErrorKind, string> = {
+  quota: 'Storage full — clear some space, then retry.',
+  unavailable: 'Browser storage is unavailable (private mode?).',
+  unknown: 'Could not write to local storage.',
+};
+
 interface SaveStatusProps {
   status: Status;
+  errorKind?: SaveErrorKind | null;
   onRetry?: () => void;
 }
 
@@ -29,8 +36,9 @@ function StatusIcon({ status }: { status: Status }) {
   return <span className={styles.dotPlaceholder} aria-hidden="true" />;
 }
 
-export function SaveStatusIndicator({ status, onRetry }: SaveStatusProps) {
+export function SaveStatusIndicator({ status, errorKind, onRetry }: SaveStatusProps) {
   const announce = status === 'saved' || status === 'error';
+  const hint = status === 'error' ? (ERROR_HINT[errorKind ?? 'unknown'] ?? null) : null;
   return (
     <span
       className={`${styles.indicator} ${styles[status]}`}
@@ -39,6 +47,7 @@ export function SaveStatusIndicator({ status, onRetry }: SaveStatusProps) {
     >
       <StatusIcon status={status} />
       <span className={styles.text}>{LABELS[status]}</span>
+      {hint && <span className={styles.hint}>{hint}</span>}
       {status === 'error' && onRetry && (
         <button type="button" className={styles.retryBtn} onClick={onRetry} aria-label="Retry save">
           <RotateCcw size={12} strokeWidth={2.25} aria-hidden="true" />
