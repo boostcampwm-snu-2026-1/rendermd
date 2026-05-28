@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/boostcampwm-snu-2026-1/rendermd/actions/workflows/ci.yml/badge.svg)](https://github.com/boostcampwm-snu-2026-1/rendermd/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](./LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](./.nvmrc)
+[![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](./.nvmrc)
 [![pnpm](https://img.shields.io/badge/pnpm-%3E%3D9-orange)](./package.json)
 
 A static web tool to preview LLM-generated markdown in real time and save it as a PDF.
@@ -13,7 +13,7 @@ A static web tool to preview LLM-generated markdown in real time and save it as 
 
 ## Development setup
 
-- Node.js `>=20`
+- Node.js `>=22`
 - pnpm `>=9`
 
 ```bash
