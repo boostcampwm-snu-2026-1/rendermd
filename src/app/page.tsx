@@ -8,7 +8,6 @@ import { Logo } from '@/components/Logo';
 import { PreviewPaneLoader } from '@/components/PreviewPaneLoader';
 import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { TabSwitcher, type Tab } from '@/components/TabSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useDraftStorage } from '@/hooks/useDraftStorage';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
@@ -26,6 +25,15 @@ const PreviewPane = dynamic(() => import('@/components/PreviewPane').then((m) =>
   ssr: false,
   loading: () => <PreviewPaneLoader />,
 });
+
+// ThemeSwitcher uses <select value={theme}>. SSR bakes in 'light' (no
+// document at build time), and React 19 hydration doesn't reconcile a
+// controlled select's selected option from the SSR-baked `selected=""`
+// attribute. Client-only render side-steps the whole class of issue.
+const ThemeSwitcher = dynamic(
+  () => import('@/components/ThemeSwitcher').then((m) => m.ThemeSwitcher),
+  { ssr: false },
+);
 
 const DEFAULT_VALUE = `# Welcome to rendermd
 
