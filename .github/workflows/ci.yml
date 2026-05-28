@@ -34,5 +34,7 @@ jobs:
       - name: Test
         run: pnpm test:run
 
-      - name: Build
-        run: pnpm build
+      - name: Build (with perf budget)
+        env:
+          PERF_BUDGET_KB: 130
+        run: pnpm exec tsx scripts/check-perf-budget.ts
