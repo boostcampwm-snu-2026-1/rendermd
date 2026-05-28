@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     'Realtime markdown preview and PDF export, built for cleaning up LLM-generated markdown.',
 };
 
+// NOTE: storage key and theme literals are duplicated from
+// src/contexts/ThemeContext.tsx because this script runs before React loads
+// and cannot import TS modules. Keep them in sync.
 const themeInitScript = `(function(){try{var t=localStorage.getItem('rendermd:theme');if(t==='light'||t==='dark'||t==='sepia'||t==='hc'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

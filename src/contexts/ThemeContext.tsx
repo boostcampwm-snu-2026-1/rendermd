@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
 export type Theme = 'light' | 'dark' | 'sepia' | 'hc';
 
@@ -11,10 +11,13 @@ export const THEMES: ReadonlyArray<{ id: Theme; label: string }> = [
   { id: 'hc', label: 'High contrast' },
 ];
 
+// NOTE: Keep THEME_STORAGE_KEY and the Theme literal union in sync with the
+// inline init script in src/app/layout.tsx (it runs before React loads and
+// cannot import this module).
 export const THEME_STORAGE_KEY = 'rendermd:theme';
 const DEFAULT_THEME: Theme = 'light';
 
-function isTheme(value: string | null): value is Theme {
+export function isTheme(value: string | null | undefined): value is Theme {
   return value === 'light' || value === 'dark' || value === 'sepia' || value === 'hc';
 }
 
@@ -25,16 +28,18 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+function readInitialTheme(): Theme {
+  if (typeof document === 'undefined') return DEFAULT_THEME;
+  const candidate = document.documentElement.dataset.theme;
+  return isTheme(candidate) ? candidate : DEFAULT_THEME;
+}
 
-  // Sync React state with whatever the inline init script set on <html data-theme>.
-  useEffect(() => {
-    const initial = document.documentElement.dataset.theme;
-    if (isTheme(initial ?? null)) {
-      setThemeState(initial as Theme);
-    }
-  }, []);
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Lazy initializer reads the theme that the inline script in layout.tsx
+  // already applied to <html> before React mounted. This prevents a
+  // one-frame light → saved-theme flash in components that vary by theme
+  // (CodeMirror in particular).
+  const [theme, setThemeState] = useState<Theme>(readInitialTheme);
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
@@ -42,7 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
-      // localStorage may throw under quota / private mode; theme still applies for this session.
+      // Quota / privacy-mode failures: theme still applies in-session.
     }
   }, []);
 

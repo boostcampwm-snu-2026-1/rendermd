@@ -60,6 +60,12 @@ body {
     color 120ms ease;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}
+
 /*
  * Code block adjustments per theme. github.css ships with light tokens;
  * we override the background so it tracks the theme. Token color refinement

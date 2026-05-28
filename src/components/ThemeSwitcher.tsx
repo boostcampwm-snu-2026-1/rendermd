@@ -1,7 +1,7 @@
 'use client';
 
 import { useId } from 'react';
-import { THEMES, useTheme, type Theme } from '@/contexts/ThemeContext';
+import { isTheme, THEMES, useTheme } from '@/contexts/ThemeContext';
 import styles from './ThemeSwitcher.module.css';
 
 export function ThemeSwitcher() {
@@ -17,7 +17,10 @@ export function ThemeSwitcher() {
         id={id}
         className={styles.select}
         value={theme}
-        onChange={(event) => setTheme(event.target.value as Theme)}
+        onChange={(event) => {
+          const next = event.target.value;
+          if (isTheme(next)) setTheme(next);
+        }}
       >
         {THEMES.map((t) => (
           <option key={t.id} value={t.id}>
