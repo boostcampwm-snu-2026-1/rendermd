@@ -18,11 +18,3 @@
   overflow: auto;
   min-width: 0;
 }
-
-.previewRaw {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
-  font-size: 14px;
-  margin: 0;
-}
