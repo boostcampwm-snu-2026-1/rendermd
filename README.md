@@ -55,28 +55,18 @@ flowchart LR
     G --> H([Save as PDF])
 ```
 
-### Layout sketches
+### Screenshots
 
-```
-Desktop (≥ 768px)
-┌──────────────────────────────────────────────────────────┐
-│ rendermd                  [Theme ▾] [💾 Saved] [📄 PDF]  │
-├──────────────────────────┬───────────────────────────────┤
-│  Markdown input          │   Live preview                │
-│  (CodeMirror 6)          │   (react-markdown)            │
-└──────────────────────────┴───────────────────────────────┘
+Captured from the live site via `pnpm dlx tsx scripts/capture.ts` (Playwright).
 
-Mobile (< 768px)
-┌─────────────────────────────┐
-│ rendermd  [Theme] [📄 PDF]  │
-├─────────────────────────────┤
-│ [ Edit │ Preview ]          │
-├─────────────────────────────┤
-│  Current tab content        │
-└─────────────────────────────┘
-```
+|                   | Desktop (1440×900)                                     | Mobile (390×844)                                     |
+| ----------------- | ------------------------------------------------------ | ---------------------------------------------------- |
+| **Light**         | ![light desktop](./docs/screenshots/light-desktop.png) | ![light mobile](./docs/screenshots/light-mobile.png) |
+| **Dark**          | ![dark desktop](./docs/screenshots/dark-desktop.png)   | ![dark mobile](./docs/screenshots/dark-mobile.png)   |
+| **Sepia**         | ![sepia desktop](./docs/screenshots/sepia-desktop.png) | ![sepia mobile](./docs/screenshots/sepia-mobile.png) |
+| **High contrast** | ![hc desktop](./docs/screenshots/hc-desktop.png)       | ![hc mobile](./docs/screenshots/hc-mobile.png)       |
 
-> Real screenshots and a screen capture GIF replace these sketches once the UI lands in week 2. See [`docs/screenshots/`](./docs/screenshots/) for the gallery convention.
+PDF samples (themed): [light](./docs/screenshots/pdf-light.pdf) · [dark](./docs/screenshots/pdf-dark.pdf)
 
 ## Branch strategy
 
