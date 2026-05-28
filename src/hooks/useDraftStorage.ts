@@ -13,6 +13,8 @@ interface UseDraftStorageReturn {
   status: SaveStatus;
   /** Re-attempt a write that previously failed (e.g. after QuotaExceededError). */
   retry: () => void;
+  /** Synchronously commit any pending debounced write (e.g. on Cmd/Ctrl+S). */
+  flush: () => void;
 }
 
 function readStorage(): string | null {
@@ -147,5 +149,5 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     setStatus(ok ? 'saved' : 'error');
   }, []);
 
-  return { value, setValue, status, retry };
+  return { value, setValue, status, retry, flush: flushPending };
 }
