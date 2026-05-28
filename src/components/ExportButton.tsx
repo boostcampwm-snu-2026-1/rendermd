@@ -108,13 +108,13 @@ export function ExportButton() {
             }
             backdropPointerDownRef.current = false;
           }}
+          onPointerCancel={() => {
+            // iOS may cancel a pointer gesture mid-drag; without this reset
+            // a stray later pointerup could spuriously close the modal.
+            backdropPointerDownRef.current = false;
+          }}
         >
-          <div
-            ref={modalRef}
-            className={styles.modal}
-            onPointerDown={(e) => e.stopPropagation()}
-            data-print="hide"
-          >
+          <div ref={modalRef} className={styles.modal} data-print="hide">
             <h2 id="print-guide-title" className={styles.title}>
               Saving as PDF on iPhone / iPad
             </h2>
