@@ -1,7 +1,7 @@
 .indicator {
   font-size: 0.85rem;
   color: var(--fg-muted);
-  min-width: 6.5rem;
+  min-width: 7.5rem;
   text-align: right;
   transition: color 120ms ease;
 }

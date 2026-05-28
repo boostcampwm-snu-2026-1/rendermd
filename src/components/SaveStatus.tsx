@@ -16,8 +16,15 @@ interface SaveStatusProps {
 
 export function SaveStatusIndicator({ status }: SaveStatusProps) {
   const text = LABELS[status];
+  // Only terminal states are announced to screen readers — otherwise the
+  // debounce cycle would chatter "Saving… Saved" on every keystroke.
+  const announce = status === 'saved' || status === 'error';
   return (
-    <span className={`${styles.indicator} ${styles[status]}`} aria-live="polite" aria-atomic="true">
+    <span
+      className={`${styles.indicator} ${styles[status]}`}
+      aria-live={announce ? 'polite' : 'off'}
+      aria-atomic="true"
+    >
       {text}
     </span>
   );

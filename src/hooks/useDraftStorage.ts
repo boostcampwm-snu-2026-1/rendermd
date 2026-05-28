@@ -31,7 +31,7 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved !== null) {
         setValueState(saved);
-        setStatus('saved');
+        // Stay 'idle' on restore — the user hasn't typed yet this session.
       }
     } catch {
       // localStorage unavailable (privacy mode etc.); nothing to load.
