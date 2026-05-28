@@ -1,31 +1,32 @@
 'use client';
 
-import CodeMirror from '@uiw/react-codemirror';
+import CodeMirror, { type Extension } from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
-import { oneDark } from '@codemirror/theme-one-dark';
 import styles from './EditorPane.module.css';
+
+const EXTENSIONS: Extension[] = [markdown()];
+
+const BASIC_SETUP = {
+  lineNumbers: true,
+  foldGutter: true,
+  highlightActiveLine: true,
+  highlightSelectionMatches: false,
+} as const;
 
 interface EditorPaneProps {
   value: string;
   onChange: (next: string) => void;
-  dark?: boolean;
 }
 
-export function EditorPane({ value, onChange, dark = false }: EditorPaneProps) {
+export function EditorPane({ value, onChange }: EditorPaneProps) {
   return (
-    <div className={styles.wrapper} aria-label="Markdown editor">
+    <div className={styles.wrapper}>
       <CodeMirror
         value={value}
         onChange={onChange}
-        extensions={[markdown()]}
-        theme={dark ? oneDark : 'light'}
+        extensions={EXTENSIONS}
+        basicSetup={BASIC_SETUP}
         height="100%"
-        basicSetup={{
-          lineNumbers: true,
-          foldGutter: true,
-          highlightActiveLine: true,
-          highlightSelectionMatches: false,
-        }}
       />
     </div>
   );

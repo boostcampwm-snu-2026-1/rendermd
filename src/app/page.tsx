@@ -6,7 +6,7 @@ import styles from './page.module.css';
 
 const DEFAULT_VALUE = `# Welcome to rendermd
 
-Paste an LLM response below and watch it render on the right.
+Paste an LLM response on the left and watch it render on the right.
 
 - **Bold** and *italic*
 - Lists and \`inline code\`
@@ -14,15 +14,15 @@ Paste an LLM response below and watch it render on the right.
 `;
 
 export default function Home() {
-  const [markdown, setMarkdown] = useState(DEFAULT_VALUE);
+  const [value, setValue] = useState(DEFAULT_VALUE);
 
   return (
     <main className={styles.layout}>
-      <section className={styles.editor}>
-        <EditorPane value={markdown} onChange={setMarkdown} />
+      <section className={styles.editor} aria-label="Markdown editor">
+        <EditorPane value={value} onChange={setValue} />
       </section>
-      <section className={styles.preview}>
-        <pre className={styles.previewRaw}>{markdown}</pre>
+      <section className={styles.preview} aria-label="Preview">
+        <pre className={styles.previewRaw}>{value}</pre>
       </section>
     </main>
   );
