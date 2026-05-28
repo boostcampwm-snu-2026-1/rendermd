@@ -69,8 +69,41 @@
   }
 }
 
+.retryBtn {
+  font: inherit;
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-left: 0.4rem;
+  /* WCAG 2.5.5 tap-target: at least 24x24. */
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  line-height: 1;
+  transition: background var(--transition-fast);
+}
+
+.retryBtn:hover {
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.retryBtn:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
 @media (max-width: 480px) {
-  .text {
+  .text,
+  .retryText {
     display: none;
   }
   .indicator {

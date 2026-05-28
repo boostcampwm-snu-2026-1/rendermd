@@ -50,7 +50,7 @@ function greet(name: string) {
 `;
 
 export default function Home() {
-  const { value, setValue, status } = useDraftStorage(DEFAULT_VALUE);
+  const { value, setValue, status, retry } = useDraftStorage(DEFAULT_VALUE);
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('edit');
   const isDark = theme === 'dark';
@@ -64,7 +64,7 @@ export default function Home() {
           <span className={styles.tagline}>markdown · preview · pdf</span>
         </div>
         <div className={styles.toolbar}>
-          <SaveStatusIndicator status={status} />
+          <SaveStatusIndicator status={status} onRetry={retry} />
           <ThemeSwitcher />
           <ExportButton />
         </div>
