@@ -1,13 +1,13 @@
 /**
- * Capture theme screenshots and a sample PDF export from the live site
- * (or a local dev server). Output lands in docs/screenshots/.
+ * Capture theme screenshots and a sample PDF export from the live site.
+ * Output lands in docs/screenshots/.
  *
  * Usage:
  *   pnpm dlx tsx scripts/capture.ts                       # default: live URL
  *   SITE=http://localhost:3000 pnpm dlx tsx scripts/capture.ts
  */
 
-import { chromium, type Browser } from 'playwright';
+import { chromium, type Browser, type Page } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -20,23 +20,25 @@ type Theme = (typeof THEMES)[number];
 const DESKTOP = { width: 1440, height: 900 } as const;
 const MOBILE = { width: 390, height: 844 } as const;
 
-async function gotoWithTheme(
-  browser: Browser,
-  theme: Theme,
-  viewport: { width: number; height: number },
-) {
+async function selectTheme(page: Page, theme: Theme) {
+  // Use the actual dropdown so React state, data-theme attribute, and
+  // localStorage all match. Bypasses any hydration race we might hit when
+  // setting localStorage and reloading.
+  await page.locator('select').selectOption(theme);
+  // Give CodeMirror's theme + react-markdown re-render a frame.
+  await page.waitForTimeout(400);
+}
+
+async function openPage(browser: Browser, viewport: { width: number; height: number }) {
   const context = await browser.newContext({ viewport });
   const page = await context.newPage();
   await page.goto(SITE, { waitUntil: 'networkidle' });
-  // Set theme AND reload so the inline head script reads it on the next
-  // request. addInitScript was unreliable on the static-export build.
-  await page.evaluate((t) => {
-    localStorage.setItem('rendermd:theme', t);
-  }, theme);
-  await page.reload({ waitUntil: 'networkidle' });
-  // Let lazy chunks (editor, preview) settle.
   await page.waitForSelector('.cm-editor', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(600);
+  // Lazy preview chunk has its own loading; wait until the seed content
+  // renders so the screenshot shows real markdown, not the placeholder.
+  await page
+    .waitForSelector('h1:has-text("Welcome to rendermd")', { timeout: 10_000 })
+    .catch(() => {});
   return { context, page };
 }
 
@@ -46,7 +48,8 @@ async function captureScreen(
   viewport: { width: number; height: number },
   suffix: string,
 ) {
-  const { context, page } = await gotoWithTheme(browser, theme, viewport);
+  const { context, page } = await openPage(browser, viewport);
+  await selectTheme(page, theme);
   const file = path.join(OUT, `${theme}-${suffix}.png`);
   await page.screenshot({ path: file, fullPage: false });
   console.log(`✓ ${path.relative(process.cwd(), file)}`);
@@ -54,7 +57,8 @@ async function captureScreen(
 }
 
 async function capturePdf(browser: Browser, theme: Theme) {
-  const { context, page } = await gotoWithTheme(browser, theme, DESKTOP);
+  const { context, page } = await openPage(browser, DESKTOP);
+  await selectTheme(page, theme);
   await page.emulateMedia({ media: 'print' });
   const file = path.join(OUT, `pdf-${theme}.pdf`);
   await page.pdf({
