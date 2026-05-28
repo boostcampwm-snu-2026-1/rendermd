@@ -1,63 +1,94 @@
 /*
- * Theme variables. Selected via [data-theme] on <html>.
+ * Theme tokens. Selected via [data-theme] on <html>.
  * Inline init script in layout.tsx applies the saved theme before first paint.
+ *
+ * Token shape:
+ *   --bg               page surface
+ *   --bg-elevated      panel / card surface (slightly lighter or darker)
+ *   --bg-subtle        muted surface (code background, blockquote stripe)
+ *   --bg-code          inline code background
+ *   --fg               primary text
+ *   --fg-muted         secondary text (labels, captions)
+ *   --fg-subtle        tertiary text (placeholders, separators)
+ *   --border           hairline divider
+ *   --border-strong    visible border (inputs, table cells)
+ *   --accent           interactive primary (links, focus, CTA bg)
+ *   --accent-fg        text on --accent surface
+ *   --danger           error state
+ *   --success          confirm state
  */
 
 :root,
 [data-theme='light'] {
   --bg: #ffffff;
   --bg-elevated: #fafafa;
-  --bg-code: #f4f4f4;
-  --bg-blockquote: #fafafa;
-  --fg: #222222;
-  --fg-muted: #555555;
-  --link: #0366d6;
-  --border: #eaeaea;
-  --border-strong: #d0d0d0;
+  --bg-subtle: #f6f7f9;
+  --bg-code: #f1f3f5;
+  --fg: #1a1f24;
+  --fg-muted: #5e6772;
+  --fg-subtle: #6e7681; /* WCAG AA 4.5:1 vs white */
+  --border: #ebedf0;
+  --border-strong: #d8dbe0;
+  --accent: #2065d0;
+  --accent-fg: #ffffff;
+  --danger: #b32616;
+  --success: #157040; /* WCAG AA 4.5:1 vs white */
 }
 
 [data-theme='dark'] {
-  --bg: #1a1a1a;
-  --bg-elevated: #252525;
-  --bg-code: #2e2e2e;
-  --bg-blockquote: #202020;
-  --fg: #e6e6e6;
-  --fg-muted: #a0a0a0;
-  --link: #58a6ff;
-  --border: #3a3a3a;
-  --border-strong: #5a5a5a;
+  --bg: #0d1117;
+  --bg-elevated: #161b22;
+  --bg-subtle: #1c222b;
+  --bg-code: #21262d;
+  --fg: #e6edf3;
+  --fg-muted: #8b949e;
+  --fg-subtle: #6e7681;
+  --border: #21262d;
+  --border-strong: #30363d;
+  --accent: #58a6ff;
+  --accent-fg: #0d1117;
+  --danger: #f85149;
+  --success: #3fb950;
 }
 
 [data-theme='sepia'] {
-  --bg: #f4ecd8;
-  --bg-elevated: #ede1c0;
-  --bg-code: #e8dab4;
-  --bg-blockquote: #ede1c0;
-  --fg: #4a3a28;
-  --fg-muted: #7a6a58;
-  --link: #8b4513;
+  --bg: #f5edd6;
+  --bg-elevated: #efe5c4;
+  --bg-subtle: #ead9ad;
+  --bg-code: #e6d4a4;
+  --fg: #3a2b1a;
+  --fg-muted: #5c4a36;
+  --fg-subtle: #8a7a64;
   --border: #d4c8a8;
   --border-strong: #b8a878;
+  --accent: #8a4a1c;
+  --accent-fg: #f5edd6;
+  --danger: #aa3a1a;
+  --success: #5a7430;
 }
 
 [data-theme='hc'] {
   --bg: #ffffff;
   --bg-elevated: #ffffff;
+  --bg-subtle: #ffffff;
   --bg-code: #ffffff;
-  --bg-blockquote: #ffffff;
   --fg: #000000;
   --fg-muted: #000000;
-  --link: #0000ee;
+  --fg-subtle: #000000;
   --border: #000000;
   --border-strong: #000000;
+  --accent: #0000ee;
+  --accent-fg: #ffffff;
+  --danger: #cc0000;
+  --success: #006600;
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
   transition:
-    background 120ms ease,
-    color 120ms ease;
+    background var(--transition-base),
+    color var(--transition-base);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -67,16 +98,23 @@ body {
 }
 
 /*
- * Code block adjustments per theme. github.css ships with light tokens;
- * we override the background so it tracks the theme. Token color refinement
- * for dark mode is tracked as a follow-up (see PR description).
+ * Code block highlighter overrides per theme. github.css ships light tokens.
+ * In dark/sepia/hc we adjust the surface; the broader token color refit is
+ * tracked as a follow-up (see #32 / #35).
  */
 [data-theme='dark'] .hljs,
+[data-theme='sepia'] .hljs,
 [data-theme='hc'] .hljs {
-  background: var(--bg-elevated) !important;
+  background: var(--bg-code) !important;
   color: var(--fg);
 }
 
 [data-theme='hc'] .hljs * {
   color: var(--fg) !important;
+}
+
+/* Selection color tracks the accent across themes. */
+::selection {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: inherit;
 }

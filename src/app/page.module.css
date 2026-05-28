@@ -4,29 +4,55 @@
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
   background: var(--bg);
   border-bottom: 1px solid var(--border);
-  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.title {
-  font-size: 1.1rem;
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.wordmark {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--fg);
   margin: 0;
+  line-height: 1;
+}
+
+.wordmark::before {
+  content: '◊';
+  color: var(--accent);
+  margin-right: 0.4ch;
+  font-weight: 400;
+}
+
+.tagline {
+  font-size: var(--text-xs);
+  color: var(--fg-subtle);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .toolbar {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-items: center;
   flex-wrap: wrap;
 }
@@ -42,10 +68,11 @@
   border-right: 1px solid var(--border);
   overflow: hidden;
   min-width: 0;
+  background: var(--bg);
 }
 
 .preview {
-  padding: 1.5rem 2rem;
+  padding: var(--space-8) var(--space-6);
   overflow: auto;
   min-width: 0;
   background: var(--bg);
@@ -62,12 +89,8 @@
     border-right: none;
   }
 
-  /*
-   * Hide via visibility + absolute positioning instead of display:none so
-   * CodeMirror keeps measuring against a real-sized container. With
-   * display:none the editor would re-show with stale viewport geometry
-   * (cursor / gutter / scrollbar drift).
-   */
+  /* Hide via visibility + absolute positioning instead of display:none so
+     CodeMirror keeps measuring against a real-sized container. */
   .editor[data-tab-active='false'],
   .preview[data-tab-active='false'] {
     position: absolute;
@@ -77,10 +100,14 @@
   }
 
   .preview {
-    padding: 1rem;
+    padding: var(--space-5);
   }
 
-  .title {
-    font-size: 1rem;
+  .header {
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .tagline {
+    display: none;
   }
 }

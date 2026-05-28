@@ -3,13 +3,37 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
 }
 
 .wrapper :global(.cm-editor) {
   height: 100%;
-  font-size: 14px;
+  font-size: var(--text-sm);
+  background: var(--bg);
 }
 
 .wrapper :global(.cm-scroller) {
-  font-family: ui-monospace, 'SF Mono', Menlo, Monaco, 'Cascadia Mono', monospace;
+  font-family: var(--font-mono);
+  padding: var(--space-2) 0;
 }
+
+.wrapper :global(.cm-content) {
+  padding-block: var(--space-2);
+}
+
+.wrapper :global(.cm-gutters) {
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  color: var(--fg-subtle);
+}
+
+.wrapper :global(.cm-activeLineGutter),
+.wrapper :global(.cm-activeLine) {
+  background: var(--bg-subtle);
+}
+
+/*
+ * In dark mode the editor uses CodeMirror's oneDark theme, which themes its
+ * own surfaces. Overriding cm-editor / cm-gutters here would create a seam
+ * between the gutter and the editor body — let oneDark be authoritative.
+ */
