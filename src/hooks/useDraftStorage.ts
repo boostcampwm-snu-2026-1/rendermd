@@ -13,6 +13,8 @@ interface UseDraftStorageReturn {
   status: SaveStatus;
   /** Re-attempt a write that previously failed (e.g. after QuotaExceededError). */
   retry: () => void;
+  /** Synchronously commit any pending debounced write (e.g. on Cmd/Ctrl+S). */
+  flush: () => void;
 }
 
 function readStorage(): string | null {
@@ -68,9 +70,17 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
   }, []);
 
   // Synchronous flush — used by event handlers that may be the last chance
-  // before the page unloads.
+  // before the page unloads. Also doubles as the manual-save entry point
+  // (Cmd/Ctrl+S) — if nothing is pending we still flip 'saving' → 'saved'
+  // briefly so the user gets visible confirmation that their explicit
+  // action was acknowledged.
   const flushPending = useCallback(() => {
-    if (!hasPendingWriteRef.current) return;
+    if (!hasPendingWriteRef.current) {
+      // No pending write, but flip status to give explicit-save feedback.
+      setStatus('saving');
+      window.setTimeout(() => setStatus('saved'), 120);
+      return;
+    }
     if (timerRef.current !== null) {
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
@@ -147,5 +157,5 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     setStatus(ok ? 'saved' : 'error');
   }, []);
 
-  return { value, setValue, status, retry };
+  return { value, setValue, status, retry, flush: flushPending };
 }

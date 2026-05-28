@@ -11,6 +11,7 @@ import { TabSwitcher, type Tab } from '@/components/TabSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useDraftStorage } from '@/hooks/useDraftStorage';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import styles from './page.module.css';
 
 // CodeMirror is ~200 kB; defer behind dynamic import.
@@ -50,10 +51,12 @@ function greet(name: string) {
 `;
 
 export default function Home() {
-  const { value, setValue, status, retry } = useDraftStorage(DEFAULT_VALUE);
+  const { value, setValue, status, retry, flush } = useDraftStorage(DEFAULT_VALUE);
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('edit');
   const isDark = theme === 'dark';
+
+  useKeyboardShortcuts({ onSave: flush });
 
   return (
     <div className={styles.app} data-app>
