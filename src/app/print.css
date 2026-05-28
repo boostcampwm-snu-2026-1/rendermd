@@ -19,7 +19,8 @@
    * "save ink" stripping. Without this, hljs token colors and themed
    * backgrounds disappear from PDF output.
    */
-  html {
+  html,
+  body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -109,10 +110,10 @@
     -webkit-box-decoration-break: clone;
   }
 
-  /* Display math can be wider than the page; reduce slightly and allow
-     horizontal scroll to overflow into the next line if needed. */
+  /* Display math: keep formulas on one page (don't split mid-formula).
+     Wide math may still overflow the page edge — proper scaling is a
+     follow-up; PDF readers handle the clip gracefully today. */
   [data-print='target'] .katex-display {
-    overflow: visible;
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -129,9 +130,11 @@
     word-break: break-all;
   }
 
-  /* Internal anchors and intentional empty hrefs: don't append. */
+  /* Internal anchors, intentional empty hrefs, and links inside code
+     blocks: don't append the URL annotation. */
   [data-print='target'] a[href^='#']::after,
-  [data-print='target'] a[href='']::after {
+  [data-print='target'] a[href='']::after,
+  [data-print='target'] :is(pre, code) a[href]::after {
     content: '';
   }
 
