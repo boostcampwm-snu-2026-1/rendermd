@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { FileDown } from 'lucide-react';
 import { isIOSSafari } from '@/util/platform';
 import styles from './ExportButton.module.css';
 
@@ -49,7 +50,8 @@ export function ExportButton() {
         onClick={handleClick}
         aria-label="Export as PDF"
       >
-        <span aria-hidden="true">📄</span> Export PDF
+        <FileDown size={16} strokeWidth={2} aria-hidden="true" />
+        Export PDF
       </button>
       {showGuide && (
         <div

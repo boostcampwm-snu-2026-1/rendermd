@@ -1,7 +1,8 @@
 .tabBar {
   display: none;
-  border-bottom: 1px solid var(--border);
   background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 var(--space-2);
 }
 
 @media (max-width: 767px) {
@@ -11,27 +12,46 @@
 }
 
 .tab {
+  font: inherit;
   flex: 1;
   background: transparent;
   border: none;
-  padding: 0.85rem 0.5rem;
-  font-size: 1rem;
+  padding: var(--space-3) var(--space-2);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--fg-muted);
   cursor: pointer;
   min-height: 44px;
-  border-bottom: 2px solid transparent;
-  transition:
-    color 100ms ease,
-    border-color 100ms ease;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 0;
+  height: 2px;
+  background: transparent;
+  border-radius: 2px 2px 0 0;
+  transition: background var(--transition-base);
 }
 
 .tab.active {
   color: var(--fg);
-  border-bottom-color: var(--link);
+}
+
+.tab.active::after {
+  background: var(--accent);
+}
+
+.tab:hover:not(.active) {
+  color: var(--fg);
 }
 
 .tab:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: -2px;
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: var(--radius-sm);
 }

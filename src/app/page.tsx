@@ -31,7 +31,7 @@ function greet(name: string) {
 }
 \`\`\`
 
-> Click **Export PDF** to print the preview. On narrow screens, switch between Edit and Preview tabs.
+> Click **Export PDF** to print the preview. Your draft autosaves to this browser.
 `;
 
 export default function Home() {
@@ -43,7 +43,10 @@ export default function Home() {
   return (
     <div className={styles.app} data-app>
       <header className={styles.header} data-print="hide">
-        <h1 className={styles.title}>rendermd</h1>
+        <div className={styles.brand}>
+          <h1 className={styles.wordmark}>rendermd</h1>
+          <span className={styles.tagline}>markdown · preview · pdf</span>
+        </div>
         <div className={styles.toolbar}>
           <SaveStatusIndicator status={status} />
           <ThemeSwitcher />

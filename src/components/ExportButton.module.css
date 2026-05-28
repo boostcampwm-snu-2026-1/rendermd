@@ -1,83 +1,138 @@
 .button {
-  font-size: 0.9rem;
-  padding: 0.3rem 0.75rem;
-  background: var(--bg-elevated);
-  color: var(--fg);
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
+  line-height: 1;
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .button:hover {
-  background: var(--bg-code);
+  background: color-mix(in srgb, var(--accent) 88%, black);
+}
+
+.button:active {
+  transform: translateY(1px);
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--link);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: color-mix(in srgb, var(--fg) 50%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 120ms ease;
 }
 
 .modal {
   background: var(--bg);
   color: var(--fg);
   border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
   max-width: 28rem;
-  width: calc(100% - 2rem);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: calc(100% - var(--space-8));
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 16px 40px rgba(0, 0, 0, 0.18);
+  animation: lift 160ms ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .modal {
+    animation: none;
+  }
 }
 
 .title {
-  margin: 0 0 0.75rem;
-  font-size: 1.1rem;
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-lg);
+  font-weight: 600;
 }
 
 .steps {
-  padding-left: 1.5rem;
-  margin: 0 0 1rem;
+  padding-left: var(--space-5);
+  margin: 0 0 var(--space-5);
   line-height: 1.65;
+  color: var(--fg);
 }
 
 .steps li {
-  margin: 0.3rem 0;
+  margin: var(--space-1) 0;
 }
 
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: flex-end;
 }
 
 .primary,
 .secondary {
-  padding: 0.4rem 0.9rem;
-  border-radius: 4px;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.9rem;
-  border: 1px solid var(--border-strong);
+  border: 1px solid transparent;
+  line-height: 1;
+  transition: background var(--transition-fast);
 }
 
 .primary {
-  background: var(--link);
-  color: white;
-  border-color: var(--link);
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, black);
 }
 
 .secondary {
   background: var(--bg-elevated);
   color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+.secondary:hover {
+  background: var(--bg-subtle);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
