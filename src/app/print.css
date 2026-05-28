@@ -64,28 +64,29 @@
     overflow: visible !important;
     height: auto !important;
     border: none !important;
-    orphans: 4;
-    widows: 4;
+    orphans: 3;
+    widows: 3;
+    font-size: 11pt;
+    line-height: 1.5;
   }
 
   [data-print='target'] article {
-    max-width: none !important;
-    margin: 0 !important;
+    /* Keep readable measure on paper. At 20mm margins on A4, this lands
+       around 70 characters per line — book-style measure. */
+    max-width: 38em !important;
+    margin: 0 auto !important;
   }
 
   /*
    * Heading anti-widow policy:
-   *
-   *   1. Headings themselves never split (break-inside) and never end a page
-   *      alone (break-after avoid).
-   *   2. The element immediately following ANY heading — not just <p>, but
-   *      also list/code/blockquote/table/figure — never starts a new page
-   *      on its own (break-before avoid). This was the actual bug: the
-   *      previous rule only covered <p>, so a heading followed by a list or
-   *      code block could still strand the heading at the bottom of a page.
-   *   3. The heading-and-first-content pair is treated as inseparable via
-   *      :has(+ *) on the heading combined with break-inside on the next
-   *      element. Modern Chrome/Firefox/Safari implement this.
+   *   1. Headings never split internally and never end a page alone.
+   *   2. The element immediately after ANY heading sticks to it
+   *      (adjacent-sibling combinator +). The previous version only covered
+   *      <p>; real LLM markdown puts lists / code / blockquote right after
+   *      headings, which is what produced the user-reported widow.
+   *   3. Paragraphs and lists right after a heading resist internal breaks
+   *      too, so the heading + first content reads as a unit. pre/blockquote/
+   *      table already get break-inside elsewhere — not duplicated here.
    */
   [data-print='target'] :is(h1, h2, h3, h4, h5, h6) {
     page-break-after: avoid;
@@ -99,12 +100,7 @@
     break-before: avoid;
   }
 
-  /* Belt-and-suspenders: the first block element after each heading also
-     resists internal breaks, so a heading + multi-line paragraph or short
-     list stays together as a visual unit. */
-  [data-print='target']
-    :is(h1, h2, h3, h4, h5, h6)
-    + :is(p, ul, ol, blockquote, pre, table, figure) {
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) + :is(p, ul, ol) {
     page-break-inside: avoid;
     break-inside: avoid;
   }
