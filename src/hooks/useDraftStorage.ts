@@ -11,61 +11,135 @@ interface UseDraftStorageReturn {
   value: string;
   setValue: (next: string) => void;
   status: SaveStatus;
+  /** Re-attempt a write that previously failed (e.g. after QuotaExceededError). */
+  retry: () => void;
+}
+
+function readStorage(): string | null {
+  if (typeof localStorage === 'undefined') return null;
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStorage(value: string): boolean {
+  try {
+    localStorage.setItem(STORAGE_KEY, value);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
  * Persists the markdown draft to localStorage with a debounced write.
  *
+ * Hardening on top of the basic debounce:
+ *   - **pagehide / beforeunload**: flushes any pending write so a tab close
+ *     during the 500ms debounce window doesn't drop the keystroke.
+ *   - **storage event**: if another tab writes the same key, mirror the new
+ *     value here (last-write-wins; the proposal scopes to single-document).
+ *   - **retry()**: lets the UI re-attempt a write after a QuotaExceededError
+ *     (e.g. the user freed space and clicked "Retry").
+ *
  * SSR/hydration: returns `fallback` on first render to match the build-time
- * pre-render. After mount, restores from localStorage (one-frame flicker is
- * intentional — avoiding it requires inlining storage content into HTML).
+ * pre-render. After mount, restores from localStorage.
  */
 export function useDraftStorage(fallback: string): UseDraftStorageReturn {
   const [value, setValueState] = useState<string>(fallback);
   const [status, setStatus] = useState<SaveStatus>('idle');
+
+  // Refs hold the latest pending write so handlers (pagehide / unmount) can
+  // flush synchronously without going through a render.
+  const pendingValueRef = useRef<string>(fallback);
+  const hasPendingWriteRef = useRef<boolean>(false);
   const timerRef = useRef<number | null>(null);
 
   // Load saved draft once after mount.
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved !== null) {
-        setValueState(saved);
-        // Stay 'idle' on restore — the user hasn't typed yet this session.
-      }
-    } catch {
-      // localStorage unavailable (privacy mode etc.); nothing to load.
+    const saved = readStorage();
+    if (saved !== null) {
+      setValueState(saved);
+      pendingValueRef.current = saved;
+      // Stay 'idle' on restore — the user hasn't typed yet this session.
     }
   }, []);
 
-  // Cleanup pending timer on unmount.
+  // Synchronous flush — used by event handlers that may be the last chance
+  // before the page unloads.
+  const flushPending = useCallback(() => {
+    if (!hasPendingWriteRef.current) return;
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    const ok = writeStorage(pendingValueRef.current);
+    hasPendingWriteRef.current = false;
+    setStatus(ok ? 'saved' : 'error');
+  }, []);
+
+  // pagehide is the canonical "tab closing" signal in modern browsers.
+  // beforeunload is the older fallback; both fire before storage flushes.
+  useEffect(() => {
+    const handler = () => flushPending();
+    window.addEventListener('pagehide', handler);
+    window.addEventListener('beforeunload', handler);
+    return () => {
+      window.removeEventListener('pagehide', handler);
+      window.removeEventListener('beforeunload', handler);
+    };
+  }, [flushPending]);
+
+  // Multi-tab: pick up writes from other tabs (storage events don't fire in
+  // the originating tab — only in peers).
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return;
+      if (e.newValue === null || e.newValue === pendingValueRef.current) return;
+      setValueState(e.newValue);
+      pendingValueRef.current = e.newValue;
+      hasPendingWriteRef.current = false;
+      setStatus('saved');
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
+  // Flush + cleanup on unmount (also covers React StrictMode double-invoke
+  // since flush is idempotent when nothing's pending).
   useEffect(() => {
     return () => {
+      flushPending();
       if (timerRef.current !== null) {
         window.clearTimeout(timerRef.current);
       }
     };
-  }, []);
+  }, [flushPending]);
 
   const setValue = useCallback((next: string) => {
     setValueState(next);
+    pendingValueRef.current = next;
+    hasPendingWriteRef.current = true;
     setStatus('saving');
     if (timerRef.current !== null) {
       window.clearTimeout(timerRef.current);
     }
     timerRef.current = window.setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, next);
-        setStatus('saved');
-      } catch (err) {
-        // Most commonly QuotaExceededError; could also be SecurityError.
-        if (process.env.NODE_ENV !== 'production') {
-          console.warn('[rendermd] draft save failed:', err);
-        }
-        setStatus('error');
-      }
+      timerRef.current = null;
+      const ok = writeStorage(next);
+      hasPendingWriteRef.current = false;
+      setStatus(ok ? 'saved' : 'error');
     }, DEBOUNCE_MS);
   }, []);
 
-  return { value, setValue, status };
+  const retry = useCallback(() => {
+    setStatus('saving');
+    const ok = writeStorage(pendingValueRef.current);
+    hasPendingWriteRef.current = !ok;
+    setStatus(ok ? 'saved' : 'error');
+  }, []);
+
+  return { value, setValue, status, retry };
 }
