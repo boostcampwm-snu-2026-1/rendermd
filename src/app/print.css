@@ -71,10 +71,17 @@
   }
 
   [data-print='target'] article {
-    /* Keep readable measure on paper. At 20mm margins on A4, this lands
-       around 70 characters per line — book-style measure. */
-    max-width: 38em !important;
-    margin: 0 auto !important;
+    /* Drop the on-screen 68ch reading measure in print: paragraphs still
+       break at the @page margin, but wide tables and code blocks need the
+       full page width or they clip. */
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  /* Paragraph-level prose still wants a reading measure — keep one via
+     padding so wide block elements (table, pre) can break out. */
+  [data-print='target'] :is(p, ul, ol, blockquote, h1, h2, h3, h4, h5, h6) {
+    max-width: 38em;
   }
 
   /*
@@ -105,12 +112,44 @@
     break-inside: avoid;
   }
 
-  /* Keep code blocks, blockquotes, tables together when possible. */
+  /* Keep code blocks and blockquotes together when possible. Tables are
+     handled separately below — they need to split across pages when long,
+     and span the full page when wide. */
   [data-print='target'] pre,
-  [data-print='target'] blockquote,
-  [data-print='target'] table {
+  [data-print='target'] blockquote {
     page-break-inside: avoid;
     break-inside: avoid;
+  }
+
+  /* Tables in print:
+     - span the full page width (escape the prose max-width above)
+     - allow break across pages so a long table doesn't strand a half-empty page
+     - keep individual rows together (no mid-row breaks)
+     - tighter typography so a 10-column table fits horizontally on A4 portrait
+     - repeat thead on each page (browser support varies; harmless where absent)
+  */
+  [data-print='target'] table {
+    max-width: none !important;
+    width: 100%;
+    font-size: 0.85em;
+    line-height: 1.4;
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  [data-print='target'] tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  [data-print='target'] thead {
+    display: table-header-group;
+  }
+
+  [data-print='target'] :is(th, td) {
+    padding: 0.4em 0.5em !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   /* Long code lines should wrap on paper instead of clipping off the page.
