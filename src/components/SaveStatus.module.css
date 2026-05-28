@@ -1,9 +1,28 @@
 .indicator {
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--text-xs);
   color: var(--fg-muted);
-  min-width: 7.5rem;
-  text-align: right;
-  transition: color 120ms ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  min-width: 5rem;
+  transition: color var(--transition-base);
+}
+
+.text {
+  white-space: nowrap;
+}
+
+.dotPlaceholder {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+
+.idle {
+  color: var(--fg-subtle);
 }
 
 .saving {
@@ -11,14 +30,50 @@
 }
 
 .saved {
-  color: var(--fg-muted);
+  color: var(--success);
 }
 
 .error {
-  color: #c93b3b;
+  color: var(--danger);
 }
 
 [data-theme='hc'] .error {
-  color: var(--fg);
   font-weight: 700;
+}
+
+.spin {
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Don't rotate; pulse opacity instead so a frozen Loader icon doesn't
+     misread as "done". Much gentler than rotation. */
+  .spin {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 480px) {
+  .text {
+    display: none;
+  }
+  .indicator {
+    min-width: auto;
+  }
 }
