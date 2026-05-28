@@ -1,0 +1,76 @@
+/*
+ * Theme variables. Selected via [data-theme] on <html>.
+ * Inline init script in layout.tsx applies the saved theme before first paint.
+ */
+
+:root,
+[data-theme='light'] {
+  --bg: #ffffff;
+  --bg-elevated: #fafafa;
+  --bg-code: #f4f4f4;
+  --bg-blockquote: #fafafa;
+  --fg: #222222;
+  --fg-muted: #555555;
+  --link: #0366d6;
+  --border: #eaeaea;
+  --border-strong: #d0d0d0;
+}
+
+[data-theme='dark'] {
+  --bg: #1a1a1a;
+  --bg-elevated: #252525;
+  --bg-code: #2e2e2e;
+  --bg-blockquote: #202020;
+  --fg: #e6e6e6;
+  --fg-muted: #a0a0a0;
+  --link: #58a6ff;
+  --border: #3a3a3a;
+  --border-strong: #5a5a5a;
+}
+
+[data-theme='sepia'] {
+  --bg: #f4ecd8;
+  --bg-elevated: #ede1c0;
+  --bg-code: #e8dab4;
+  --bg-blockquote: #ede1c0;
+  --fg: #4a3a28;
+  --fg-muted: #7a6a58;
+  --link: #8b4513;
+  --border: #d4c8a8;
+  --border-strong: #b8a878;
+}
+
+[data-theme='hc'] {
+  --bg: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-code: #ffffff;
+  --bg-blockquote: #ffffff;
+  --fg: #000000;
+  --fg-muted: #000000;
+  --link: #0000ee;
+  --border: #000000;
+  --border-strong: #000000;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+/*
+ * Code block adjustments per theme. github.css ships with light tokens;
+ * we override the background so it tracks the theme. Token color refinement
+ * for dark mode is tracked as a follow-up (see PR description).
+ */
+[data-theme='dark'] .hljs,
+[data-theme='hc'] .hljs {
+  background: var(--bg-elevated) !important;
+  color: var(--fg);
+}
+
+[data-theme='hc'] .hljs * {
+  color: var(--fg) !important;
+}
