@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { EditorPane } from '@/components/EditorPane';
 import { PreviewPane } from '@/components/PreviewPane';
+import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useDraftStorage } from '@/hooks/useDraftStorage';
 import styles from './page.module.css';
 
 const DEFAULT_VALUE = `# Welcome to rendermd
@@ -27,11 +28,11 @@ function greet(name: string) {
 }
 \`\`\`
 
-> More features coming in the next PRs (autosave, PDF export, mobile tabs).
+> Your draft autosaves to this browser. PDF export and mobile tabs land in the next PRs.
 `;
 
 export default function Home() {
-  const [value, setValue] = useState(DEFAULT_VALUE);
+  const { value, setValue, status } = useDraftStorage(DEFAULT_VALUE);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -40,6 +41,7 @@ export default function Home() {
       <header className={styles.header}>
         <h1 className={styles.title}>rendermd</h1>
         <div className={styles.toolbar}>
+          <SaveStatusIndicator status={status} />
           <ThemeSwitcher />
         </div>
       </header>
