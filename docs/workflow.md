@@ -87,24 +87,26 @@ I work with one primary AI agent (Claude Code) for design and implementation. Th
 
 ## 3. Multi-agent role separation
 
-Beyond the primary coding agent, I delegate independent checks to two specialized sub-agents per PR. They get only the diff (or the built site URL) — no context from my chats with the primary agent. **Independence is the point.**
+Beyond the primary coding agent, I delegate independent checks to **three** specialized sub-agents per PR. They get only the diff (or the built site URL) — no context from my chats with the primary agent. **Independence is the point.**
 
-### Agent A — End-user persona (verifier)
+### Agent A — Naive client (verifier)
 
-**Role:** A non-technical user trying to use rendermd for the first time. Has Chrome (browse, click, screenshot) and a shell (curl, lighthouse) available. **Does not read source code.**
+**Role:** A non-technical user trying to use rendermd for the first time. Has Chrome (browse, click, screenshot), a shell (curl, lighthouse), AND access to the Playwright capture script. **Does not read source code.**
 
 **Job:**
 
 - Launch the dev server or visit the deployed URL.
 - Exercise core flows like a real user: paste markdown, switch theme, export PDF, resize to mobile.
 - Report what's confusing, broken, or visually off.
-- Capture screenshots and console errors.
+- **For any PR that touches rendering or print CSS: run `pnpm dlx tsx scripts/capture.ts`, then `Read` the produced `docs/screenshots/pdf-*.pdf` files (Claude Code's Read tool renders PDF pages as inline images). Inspect for clipping, alignment, margin, theme correctness.**
 
 **Prompt template:**
 
-> You are a non-technical user. You don't know markdown syntax. You opened rendermd at `<URL>`. Paste this LLM response into the editor: `[...]`. Try to save it as a PDF on desktop Chrome and on iOS Safari (mobile DevTools). Report every moment you were confused or stuck. Do not read the code — only describe what you experienced. Output: friction points + screenshots + reproduction steps.
+> You are a non-technical user. You don't know markdown syntax. You opened rendermd at `<URL>`. Paste this LLM response into the editor: `[...]`. Try to save it as a PDF on desktop Chrome and on iOS Safari (mobile DevTools).
+> For any visual/print change: run `pnpm dlx tsx scripts/capture.ts`, then Read the produced PDFs at `/home/wsl/VLSI/rendermd/docs/screenshots/pdf-light.pdf` and `pdf-dark.pdf` — Claude's Read tool renders PDF pages as images. Look at the actual rendered output, not just the CSS.
+> Report every moment you were confused or stuck, plus any visual issues you can see in the captured PDFs.
 
-**Expected output:** A short list of friction points, screenshots, repro steps.
+**Expected output:** A short list of friction points + 1-2 concrete observations from the rendered PDF images.
 
 ### Agent B — Senior FE reviewer
 
@@ -115,25 +117,54 @@ Beyond the primary coding agent, I delegate independent checks to two specialize
 - Flag correctness bugs, perf issues, accessibility violations, type-safety gaps, hidden re-renders, hooks-rules violations, security risks (XSS via `dangerouslySetInnerHTML`, etc.), bundle bloat.
 - Distinguish "must fix to merge" from "follow-up".
 - Suggest minimal changes, not rewrites. No stylistic nits unless they affect correctness.
+- **Verify bundle claim:** run `pnpm build`, grep `out/_next/static/chunks/` to confirm the diff's perf claims about chunk splitting / size.
 
 **Prompt template:**
 
-> You are a senior frontend engineer. Review this PR diff against rendermd. Stack: Next.js (static export), TS, CodeMirror 6, react-markdown, CSS Modules, pnpm, Vitest. Focus: correctness, perf, a11y, types, anti-patterns. For each finding give: `file:line`, severity (block / nit / follow-up), why, suggested fix. No stylistic comments.
+> You are a senior frontend engineer. Review this PR diff against rendermd. Stack: Next.js (static export), TS, CodeMirror 6, react-markdown, CSS Modules, pnpm, Vitest. Focus: correctness, perf, a11y, types, anti-patterns. For each finding give: `file:line`, severity (block / nit / follow-up), why, suggested fix. No stylistic comments. If the PR claims a bundle delta, verify it via `pnpm build` output.
 
 **Expected output:** Finding list keyed by severity, with `file:line` refs.
 
+### Agent C — UI/UX worker
+
+**Role:** A top-tier UI/UX designer reviewing visual quality, interaction design, micro-interactions, accessibility detail, and brand voice consistency.
+
+**Job:**
+
+- Read the relevant component + CSS files (skip pure logic / hook code — Agent B covers that).
+- Inspect captured PNGs and PDFs via Read tool.
+- Flag visual inconsistencies, spacing/scale issues, contrast violations beyond WCAG minimums, loading-state quality, micro-interaction polish, copy tone mismatches.
+- **Critically evaluate premises** (case study: an earlier review flagged dark-theme PDF as "wasting ink" — but PDFs are digital files, not paper. Premise was wrong; finding was rejected.)
+
+**Prompt template:**
+
+> You are a top-tier UI/UX worker reviewing PR #N. Brand voice: Linear / iA Writer / Notion — calm utility, not playful. Read the touched component files + their CSS modules. If the PR changes rendering, read the captured screenshots in `docs/screenshots/` (PNG + PDF, both via Read tool). Be opinionated; if a design is weak, say so directly. Skip code-correctness — Agent B covers that. For each finding: severity (block / nit / follow-up), the visual issue in plain language, a concrete fix.
+
+**Expected output:** Visual / interaction / copy findings; no code-correctness overlap with Agent B.
+
 ### My role — orchestrator and final judge
 
-- Read both agents' reports.
-- Reconcile conflicts (e.g., verifier says "PDF export button is hard to find" + reviewer says "the button code is fine" → the UX issue trumps the code issue).
+- Read all three agents' reports.
+- Reconcile conflicts (e.g., verifier says "PDF export button is hard to find" + reviewer says "the button code is fine" → the UX issue trumps).
+- **Test premises before accepting any agent finding.** Premise-checking is the orchestrator's job — an agent confident about a finding built on a wrong premise produces a worse recommendation than a "no findings" report. (See dark-theme-ink case above.)
 - Decide scope: which findings block merge, which become follow-up issues.
 - Approve and merge.
 
-### Why two separate agents, not one
+### Why three separate agents, not one
 
 - **Independence:** an agent that has read the implementation cannot objectively act as a "first-time user".
-- **Specialization:** the user-persona prompt and the reviewer prompt drive very different output styles. Mixing dilutes both.
+- **Specialization:** naive-client / FE / UI/UX prompts drive very different output styles. Mixing dilutes all three.
 - **Reproducibility:** same prompts on the next PR → consistent review quality.
+
+### What no agent could catch before PDF inspection
+
+Three real production bugs slipped past agent review when verifiers could only inspect HTML:
+
+1. PR #75 era — table clipping in PDF export (user-reported via `reference/export_example.pdf`).
+2. PR #82 era — theme hydration mismatch (controlled `<select>` doesn't reconcile SSR-baked `selected=""`).
+3. PR #88 era — dark theme blue navy cast (only visible against a bright-monitor render).
+
+All three were diagnosable from actually-rendered output but invisible in CSS / React review. The Playwright + PDF-Read pattern (built in PR #80, formalized here) closes that gap.
 
 ---
 
