@@ -215,4 +215,13 @@
     page-break-inside: avoid;
     break-inside: avoid;
   }
+
+  /* Manual page-break marker (see remark-page-break). Forces a fresh page
+     where the user dropped <!-- page-break --> in the source markdown. */
+  [data-print='target'] .rendermd-page-break {
+    page-break-before: always;
+    break-before: page;
+    visibility: hidden;
+    height: 0;
+  }
 }
