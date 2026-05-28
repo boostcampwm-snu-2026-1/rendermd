@@ -27,7 +27,9 @@
 }
 
 .logo {
-  color: var(--accent);
+  /* --fg, not --accent: the Export PDF CTA owns the brand color on this
+     surface. Linear / iA Writer use the same pattern. */
+  color: var(--fg);
   flex-shrink: 0;
   display: block;
 }
