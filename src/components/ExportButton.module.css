@@ -1,0 +1,83 @@
+.button {
+  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  background: var(--bg-elevated);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.button:hover {
+  background: var(--bg-code);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 28rem;
+  width: calc(100% - 2rem);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.steps {
+  padding-left: 1.5rem;
+  margin: 0 0 1rem;
+  line-height: 1.65;
+}
+
+.steps li {
+  margin: 0.3rem 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.primary,
+.secondary {
+  padding: 0.4rem 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-strong);
+}
+
+.primary {
+  background: var(--link);
+  color: white;
+  border-color: var(--link);
+}
+
+.secondary {
+  background: var(--bg-elevated);
+  color: var(--fg);
+}
