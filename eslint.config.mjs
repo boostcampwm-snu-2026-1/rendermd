@@ -14,6 +14,20 @@ const eslintConfig = [
   {
     ignores: ['.next/**', 'out/**', 'node_modules/**', 'next-env.d.ts'],
   },
+  {
+    rules: {
+      // Allow intentionally-unused parameters when underscore-prefixed
+      // (common for mocks and destructured rest patterns).
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;
