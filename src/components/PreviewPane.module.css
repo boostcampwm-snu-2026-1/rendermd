@@ -285,3 +285,11 @@
   margin-left: var(--space-5);
   color: var(--fg-muted);
 }
+
+/* Manual page-break marker (remark-page-break). Invisible on screen so the
+   document reads the same; @media print picks it up to force a new page. */
+.article :global(.rendermd-page-break) {
+  height: 0;
+  margin: 0;
+  visibility: hidden;
+}
