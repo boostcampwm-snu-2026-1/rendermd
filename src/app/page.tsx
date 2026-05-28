@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { EditorPane } from '@/components/EditorPane';
+import dynamic from 'next/dynamic';
 import { ExportButton } from '@/components/ExportButton';
+import { EditorPaneLoader } from '@/components/EditorPaneLoader';
 import { PreviewPane } from '@/components/PreviewPane';
 import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { TabSwitcher, type Tab } from '@/components/TabSwitcher';
@@ -10,6 +11,17 @@ import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useDraftStorage } from '@/hooks/useDraftStorage';
 import styles from './page.module.css';
+
+// CodeMirror is ~200 kB; dynamic-import + ssr:false keeps it off the initial
+// First-Load JS. PreviewPane stays eager — paste-and-export needs the
+// rendered output immediately on first paint.
+const EditorPane = dynamic(
+  () => import('@/components/EditorPane').then((m) => ({ default: m.EditorPane })),
+  {
+    ssr: false,
+    loading: () => <EditorPaneLoader />,
+  },
+);
 
 const DEFAULT_VALUE = `# Welcome to rendermd
 

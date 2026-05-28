@@ -37,3 +37,36 @@
  * own surfaces. Overriding cm-editor / cm-gutters here would create a seam
  * between the gutter and the editor body — let oneDark be authoritative.
  */
+
+.loaderInner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--fg-subtle);
+  font-size: var(--text-sm);
+}
+
+.loaderText {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  /* Delay the placeholder so a fast chunk load shows no flash. */
+  animation: fadeIn 220ms ease-out 180ms forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loaderText {
+    animation: none;
+    opacity: 1;
+  }
+}
