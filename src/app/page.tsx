@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { ExportButton } from '@/components/ExportButton';
 import { EditorPaneLoader } from '@/components/EditorPaneLoader';
 import { Logo } from '@/components/Logo';
-import { PreviewPane } from '@/components/PreviewPane';
+import { PreviewPaneLoader } from '@/components/PreviewPaneLoader';
 import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { TabSwitcher, type Tab } from '@/components/TabSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -13,12 +13,17 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useDraftStorage } from '@/hooks/useDraftStorage';
 import styles from './page.module.css';
 
-// CodeMirror is ~200 kB; dynamic-import + ssr:false keeps it off the initial
-// First-Load JS. PreviewPane stays eager — paste-and-export needs the
-// rendered output immediately on first paint.
+// CodeMirror is ~200 kB; defer behind dynamic import.
 const EditorPane = dynamic(() => import('@/components/EditorPane').then((m) => m.EditorPane), {
   ssr: false,
   loading: () => <EditorPaneLoader />,
+});
+
+// react-markdown + remark-gfm + remark-math + rehype-katex + rehype-highlight
+// totals ~200 kB. Defer it too.
+const PreviewPane = dynamic(() => import('@/components/PreviewPane').then((m) => m.PreviewPane), {
+  ssr: false,
+  loading: () => <PreviewPaneLoader />,
 });
 
 const DEFAULT_VALUE = `# Welcome to rendermd
@@ -54,7 +59,7 @@ export default function Home() {
     <div className={styles.app} data-app>
       <header className={styles.header} data-print="hide">
         <div className={styles.brand}>
-          <Logo size={22} className={styles.logo} />
+          <Logo size={22} className={styles.logo} title={null} />
           <h1 className={styles.wordmark}>rendermd</h1>
           <span className={styles.tagline}>markdown · preview · pdf</span>
         </div>
