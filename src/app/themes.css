@@ -107,9 +107,15 @@ body {
 }
 
 /*
- * Code block highlighter overrides per theme. github.css ships light tokens.
- * In dark/sepia/hc we adjust the surface; the broader token color refit is
- * tracked as a follow-up (see #32 / #35).
+ * Code block highlighter overrides per theme.
+ *
+ * github.css ships LIGHT-theme tokens. We override the surface (bg/text)
+ * for non-light themes; for dark we also retint each token type so code
+ * blocks don't render as low-contrast pastel-on-dark.
+ *
+ * Token color refit lifted from GitHub's own github-dark.css; subset
+ * trimmed to what we actually emit (markdown / ts / py / bash / json /
+ * css / html / yaml / sql / go).
  */
 [data-theme='dark'] .hljs,
 [data-theme='sepia'] .hljs,
@@ -118,6 +124,95 @@ body {
   color: var(--fg);
 }
 
+[data-theme='dark'] .hljs-doctag,
+[data-theme='dark'] .hljs-keyword,
+[data-theme='dark'] .hljs-meta .hljs-keyword,
+[data-theme='dark'] .hljs-template-tag,
+[data-theme='dark'] .hljs-template-variable,
+[data-theme='dark'] .hljs-type,
+[data-theme='dark'] .hljs-variable.language_ {
+  color: #ff7b72;
+}
+
+[data-theme='dark'] .hljs-title,
+[data-theme='dark'] .hljs-title.class_,
+[data-theme='dark'] .hljs-title.class_.inherited__,
+[data-theme='dark'] .hljs-title.function_ {
+  color: #d2a8ff;
+}
+
+[data-theme='dark'] .hljs-attr,
+[data-theme='dark'] .hljs-attribute,
+[data-theme='dark'] .hljs-literal,
+[data-theme='dark'] .hljs-meta,
+[data-theme='dark'] .hljs-number,
+[data-theme='dark'] .hljs-operator,
+[data-theme='dark'] .hljs-selector-attr,
+[data-theme='dark'] .hljs-selector-class,
+[data-theme='dark'] .hljs-selector-id,
+[data-theme='dark'] .hljs-variable {
+  color: #79c0ff;
+}
+
+[data-theme='dark'] .hljs-regexp,
+[data-theme='dark'] .hljs-string,
+[data-theme='dark'] .hljs-meta .hljs-string {
+  color: #a5d6ff;
+}
+
+[data-theme='dark'] .hljs-built_in,
+[data-theme='dark'] .hljs-symbol {
+  color: #ffa657;
+}
+
+[data-theme='dark'] .hljs-comment,
+[data-theme='dark'] .hljs-code,
+[data-theme='dark'] .hljs-formula {
+  color: #8b949e;
+}
+
+[data-theme='dark'] .hljs-name,
+[data-theme='dark'] .hljs-quote,
+[data-theme='dark'] .hljs-selector-tag,
+[data-theme='dark'] .hljs-selector-pseudo {
+  color: #7ee787;
+}
+
+[data-theme='dark'] .hljs-subst {
+  color: var(--fg);
+}
+
+[data-theme='dark'] .hljs-section {
+  color: #1f6feb;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .hljs-bullet {
+  color: #f2cc60;
+}
+
+[data-theme='dark'] .hljs-emphasis {
+  color: var(--fg);
+  font-style: italic;
+}
+
+[data-theme='dark'] .hljs-strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+[data-theme='dark'] .hljs-addition {
+  color: #aff5b4;
+  background-color: #033a16;
+}
+
+[data-theme='dark'] .hljs-deletion {
+  color: #ffdcd7;
+  background-color: #67060c;
+}
+
+/* High contrast: everything is var(--fg). The light surface is enforced
+   by --bg-code = #ffffff; tokens collapse to pure-fg via the rule below. */
 [data-theme='hc'] .hljs * {
   color: var(--fg) !important;
 }
