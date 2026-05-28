@@ -9,13 +9,20 @@ interface TabSwitcherProps {
   onChange: (next: Tab) => void;
 }
 
+/**
+ * Mobile-only toggle between editor and preview.
+ *
+ * Uses `aria-pressed` toggle-button semantics rather than the WAI-ARIA tablist
+ * pattern — tablist requires roving tabIndex, arrow-key navigation, and
+ * `role='tabpanel'` on the panels. A pair of toggle buttons is honest and
+ * adequate here.
+ */
 export function TabSwitcher({ active, onChange }: TabSwitcherProps) {
   return (
-    <div className={styles.tabBar} role="tablist" aria-label="Editor view" data-print="hide">
+    <nav className={styles.tabBar} aria-label="Editor view" data-print="hide">
       <button
         type="button"
-        role="tab"
-        aria-selected={active === 'edit'}
+        aria-pressed={active === 'edit'}
         className={`${styles.tab} ${active === 'edit' ? styles.active : ''}`}
         onClick={() => onChange('edit')}
       >
@@ -23,13 +30,12 @@ export function TabSwitcher({ active, onChange }: TabSwitcherProps) {
       </button>
       <button
         type="button"
-        role="tab"
-        aria-selected={active === 'preview'}
+        aria-pressed={active === 'preview'}
         className={`${styles.tab} ${active === 'preview' ? styles.active : ''}`}
         onClick={() => onChange('preview')}
       >
         Preview
       </button>
-    </div>
+    </nav>
   );
 }

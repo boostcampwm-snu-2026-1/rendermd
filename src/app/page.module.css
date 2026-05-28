@@ -55,15 +55,25 @@
 @media (max-width: 767px) {
   .layout {
     grid-template-columns: 1fr;
+    position: relative;
   }
 
   .editor {
     border-right: none;
   }
 
+  /*
+   * Hide via visibility + absolute positioning instead of display:none so
+   * CodeMirror keeps measuring against a real-sized container. With
+   * display:none the editor would re-show with stale viewport geometry
+   * (cursor / gutter / scrollbar drift).
+   */
   .editor[data-tab-active='false'],
   .preview[data-tab-active='false'] {
-    display: none;
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .preview {
