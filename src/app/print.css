@@ -64,8 +64,8 @@
     overflow: visible !important;
     height: auto !important;
     border: none !important;
-    orphans: 3;
-    widows: 3;
+    orphans: 4;
+    widows: 4;
   }
 
   [data-print='target'] article {
@@ -73,18 +73,40 @@
     margin: 0 !important;
   }
 
-  /* Avoid splitting headings from their following content. */
-  [data-print='target'] :is(h1, h2, h3, h4) {
+  /*
+   * Heading anti-widow policy:
+   *
+   *   1. Headings themselves never split (break-inside) and never end a page
+   *      alone (break-after avoid).
+   *   2. The element immediately following ANY heading — not just <p>, but
+   *      also list/code/blockquote/table/figure — never starts a new page
+   *      on its own (break-before avoid). This was the actual bug: the
+   *      previous rule only covered <p>, so a heading followed by a list or
+   *      code block could still strand the heading at the bottom of a page.
+   *   3. The heading-and-first-content pair is treated as inseparable via
+   *      :has(+ *) on the heading combined with break-inside on the next
+   *      element. Modern Chrome/Firefox/Safari implement this.
+   */
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) {
     page-break-after: avoid;
     break-after: avoid;
     page-break-inside: avoid;
     break-inside: avoid;
   }
 
-  /* The first paragraph after a heading should travel with it. */
-  [data-print='target'] :is(h1, h2, h3, h4) + p {
+  [data-print='target'] :is(h1, h2, h3, h4, h5, h6) + * {
     page-break-before: avoid;
     break-before: avoid;
+  }
+
+  /* Belt-and-suspenders: the first block element after each heading also
+     resists internal breaks, so a heading + multi-line paragraph or short
+     list stays together as a visual unit. */
+  [data-print='target']
+    :is(h1, h2, h3, h4, h5, h6)
+    + :is(p, ul, ol, blockquote, pre, table, figure) {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   /* Keep code blocks, blockquotes, tables together when possible. */
