@@ -4,6 +4,7 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { ExportButton } from '@/components/ExportButton';
 import { EditorPaneLoader } from '@/components/EditorPaneLoader';
+import { Logo } from '@/components/Logo';
 import { PreviewPane } from '@/components/PreviewPane';
 import { SaveStatusIndicator } from '@/components/SaveStatus';
 import { TabSwitcher, type Tab } from '@/components/TabSwitcher';
@@ -53,6 +54,7 @@ export default function Home() {
     <div className={styles.app} data-app>
       <header className={styles.header} data-print="hide">
         <div className={styles.brand}>
+          <Logo size={22} className={styles.logo} />
           <h1 className={styles.wordmark}>rendermd</h1>
           <span className={styles.tagline}>markdown · preview · pdf</span>
         </div>
