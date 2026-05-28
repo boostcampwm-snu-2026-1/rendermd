@@ -21,9 +21,15 @@
 
 .brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-2);
   min-width: 0;
+}
+
+.logo {
+  color: var(--accent);
+  flex-shrink: 0;
+  display: block;
 }
 
 .wordmark {
@@ -34,13 +40,6 @@
   color: var(--fg);
   margin: 0;
   line-height: 1;
-}
-
-.wordmark::before {
-  content: '◊';
-  color: var(--accent);
-  margin-right: 0.4ch;
-  font-weight: 400;
 }
 
 .tagline {
