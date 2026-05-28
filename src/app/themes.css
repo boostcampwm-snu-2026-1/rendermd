@@ -36,17 +36,22 @@
 }
 
 [data-theme='dark'] {
-  --bg: #0d1117;
-  --bg-elevated: #161b22;
-  --bg-subtle: #1c222b;
-  --bg-code: #21262d;
-  --fg: #e6edf3;
-  --fg-muted: #8b949e;
-  --fg-subtle: #6e7681;
-  --border: #21262d;
-  --border-strong: #30363d;
-  --accent: #58a6ff;
-  --accent-fg: #0d1117;
+  /*
+   * Neutral grayscale — no blue cast.
+   * The earlier GitHub-style #0d1117 reads as deep navy under bright
+   * monitors; this palette stays achromatic so the user sees true black.
+   */
+  --bg: #111111;
+  --bg-elevated: #1a1a1a;
+  --bg-subtle: #1f1f1f;
+  --bg-code: #262626;
+  --fg: #ededed;
+  --fg-muted: #a0a0a0;
+  --fg-subtle: #707070;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
+  --accent: #6ea8ff;
+  --accent-fg: #111111;
   --danger: #f85149;
   --success: #3fb950;
 }
