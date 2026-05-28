@@ -1,22 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isIOSSafari } from '@/util/platform';
 import styles from './ExportButton.module.css';
 
 export function ExportButton() {
   const [showGuide, setShowGuide] = useState(false);
+  const continueButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!showGuide) return;
+
+    previousFocusRef.current = (document.activeElement as HTMLElement) ?? null;
+    continueButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowGuide(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      previousFocusRef.current?.focus?.();
+    };
+  }, [showGuide]);
 
   const triggerPrint = () => {
     setShowGuide(false);
-    window.print();
+    // Defer to let the modal unmount before print steals the thread.
+    setTimeout(() => window.print(), 0);
   };
 
   const handleClick = () => {
     if (isIOSSafari()) {
       setShowGuide(true);
     } else {
-      triggerPrint();
+      window.print();
     }
   };
 
@@ -59,7 +80,12 @@ export function ExportButton() {
               >
                 Cancel
               </button>
-              <button type="button" className={styles.primary} onClick={triggerPrint}>
+              <button
+                ref={continueButtonRef}
+                type="button"
+                className={styles.primary}
+                onClick={triggerPrint}
+              >
                 Continue
               </button>
             </div>
