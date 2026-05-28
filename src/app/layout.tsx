@@ -11,26 +11,47 @@ const SITE_NAME = 'rendermd';
 const SITE_DESCRIPTION =
   'Realtime markdown preview and PDF export, built for cleaning up LLM-generated markdown.';
 
+// Absolute base ORIGIN (no path) for OG/Twitter/canonical resolution.
+// Next prepends basePath to image asset URLs automatically (so /og.png
+// becomes /rendermd/og.png), so metadataBase must NOT include basePath
+// or we'd get /rendermd/rendermd/og.png. For text-link fields (canonical,
+// og:url) Next does NOT auto-add basePath, so we prepend it manually.
+const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_ORIGIN ?? 'https://boostcampwm-snu-2026-1.github.io';
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+const SITE_PATH = `${BASE_PATH}/`;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_ORIGIN),
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   authors: [{ name: 'jay20012024' }],
   keywords: ['markdown', 'pdf', 'preview', 'llm', 'editor', 'export'],
+  alternates: {
+    canonical: SITE_PATH,
+  },
   openGraph: {
     type: 'website',
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
     siteName: SITE_NAME,
+    url: SITE_PATH,
+    // opengraph-image.png in app/ is picked up automatically.
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
   },
   robots: {
     index: true,
     follow: true,
+  },
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: 'black-translucent',
   },
 };
 
@@ -39,7 +60,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0d1117' },
+    { media: '(prefers-color-scheme: dark)', color: '#111111' },
   ],
 };
 
