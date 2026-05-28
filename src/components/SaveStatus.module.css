@@ -76,9 +76,13 @@
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.3rem;
   margin-left: 0.4rem;
-  padding: 0.15rem 0.4rem;
+  /* WCAG 2.5.5 tap-target: at least 24x24. */
+  min-height: 28px;
+  min-width: 28px;
+  padding: 0.3rem 0.6rem;
   background: transparent;
   color: var(--danger);
   border: 1px solid currentColor;

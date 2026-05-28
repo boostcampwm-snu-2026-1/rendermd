@@ -143,6 +143,38 @@ describe('useDraftStorage', () => {
     expect(result.current.status).toBe('saved');
   });
 
+  it('storage event cancels a pending local debounce (no peer-value clobber)', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    const { result } = renderHook(() => useDraftStorage('initial'));
+
+    // Local user types — pending debounce armed.
+    act(() => {
+      result.current.setValue('local typing');
+    });
+    expect(result.current.status).toBe('saving');
+
+    // Peer tab writes BEFORE our debounce fires.
+    act(() => {
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: STORAGE_KEY,
+          newValue: 'peer write',
+          oldValue: 'initial',
+        }),
+      );
+    });
+
+    // Advance past the original debounce window.
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    // The pending write should have been cancelled; our setItem must NOT
+    // have fired with the stale 'local typing'.
+    expect(setItemSpy).not.toHaveBeenCalledWith(STORAGE_KEY, 'local typing');
+    expect(result.current.value).toBe('peer write');
+  });
+
   it('ignores storage events for unrelated keys', () => {
     const { result } = renderHook(() => useDraftStorage('initial'));
 

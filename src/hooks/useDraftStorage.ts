@@ -98,6 +98,12 @@ export function useDraftStorage(fallback: string): UseDraftStorageReturn {
     const handler = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY) return;
       if (e.newValue === null || e.newValue === pendingValueRef.current) return;
+      // Cancel any pending local debounce — a peer tab just wrote a newer
+      // value, and our pending write would clobber it with stale text.
+      if (timerRef.current !== null) {
+        window.clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
       setValueState(e.newValue);
       pendingValueRef.current = e.newValue;
       hasPendingWriteRef.current = false;
