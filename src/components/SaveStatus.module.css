@@ -1,0 +1,24 @@
+.indicator {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  min-width: 6.5rem;
+  text-align: right;
+  transition: color 120ms ease;
+}
+
+.saving {
+  color: var(--fg-muted);
+}
+
+.saved {
+  color: var(--fg-muted);
+}
+
+.error {
+  color: #c93b3b;
+}
+
+[data-theme='hc'] .error {
+  color: var(--fg);
+  font-weight: 700;
+}
