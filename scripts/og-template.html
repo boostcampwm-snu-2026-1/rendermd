@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+        background: #111111;
+        color: #ededed;
+        overflow: hidden;
+      }
+      .card {
+        width: 100%;
+        height: 100%;
+        padding: 80px 96px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 40px;
+      }
+      .logo {
+        flex-shrink: 0;
+      }
+      .wordmark {
+        font-family: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+        font-size: 96px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #ededed;
+        line-height: 1;
+      }
+      .lede {
+        font-size: 38px;
+        line-height: 1.35;
+        color: #a0a0a0;
+        max-width: 1000px;
+        margin-bottom: 56px;
+      }
+      .lede strong {
+        color: #ededed;
+        font-weight: 500;
+      }
+      .tagline {
+        font-size: 22px;
+        color: #707070;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        background: #6ea8ff;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="head">
+        <svg
+          class="logo"
+          width="88"
+          height="88"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#ededed"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 2 L22 12 L12 22 L2 12 Z" />
+          <line x1="8" y1="11" x2="16" y2="11" />
+          <line x1="8" y1="15" x2="12" y2="15" />
+        </svg>
+        <div class="wordmark">rendermd</div>
+      </div>
+      <div class="lede">
+        Realtime <strong>markdown preview</strong> and
+        <strong>PDF export</strong>, for cleaning up LLM-generated text.
+      </div>
+      <div class="tagline">
+        <span class="dot"></span>
+        markdown · preview · pdf
+      </div>
+    </div>
+  </body>
+</html>
