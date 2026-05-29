@@ -36,7 +36,7 @@ jobs:
 
       - name: Build
         env:
-          NEXT_PUBLIC_BASE_PATH: /rendermd
+          NEXT_PUBLIC_BASE_PATH: /rendermd-hyuk
         run: pnpm build
 
       - uses: actions/upload-pages-artifact@v5
