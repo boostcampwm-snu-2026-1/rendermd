@@ -11,7 +11,7 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
-const SITE = process.env.SITE ?? 'https://boostcampwm-snu-2026-1.github.io/rendermd/';
+const SITE = process.env.SITE ?? 'https://boostcampwm-snu-2026-1.github.io/rendermd-hyuk/';
 const OUT = path.resolve(process.cwd(), 'docs/screenshots');
 
 const THEMES = ['light', 'dark', 'sepia', 'hc'] as const;

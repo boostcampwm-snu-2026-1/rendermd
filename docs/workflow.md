@@ -197,7 +197,7 @@ All three were diagnosable from actually-rendered output but invisible in CSS / 
 ### Deployment
 
 - [ ] `pnpm build` finishes with no warnings.
-- [ ] GitHub Pages `basePath: '/rendermd'` is set — assets resolve correctly.
+- [ ] GitHub Pages `basePath: '/rendermd-hyuk'` is set — assets resolve correctly.
 - [ ] `out/` alone runs the site (no server dependency).
 - [ ] PDF export works on the deployed URL, not just localhost.
 

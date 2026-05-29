@@ -13,9 +13,10 @@ const SITE_DESCRIPTION =
 
 // Absolute base ORIGIN (no path) for OG/Twitter/canonical resolution.
 // Next prepends basePath to image asset URLs automatically (so /og.png
-// becomes /rendermd/og.png), so metadataBase must NOT include basePath
-// or we'd get /rendermd/rendermd/og.png. For text-link fields (canonical,
-// og:url) Next does NOT auto-add basePath, so we prepend it manually.
+// becomes /rendermd-hyuk/og.png), so metadataBase must NOT include basePath
+// or we'd get /rendermd-hyuk/rendermd-hyuk/og.png. For text-link fields
+// (canonical, og:url) Next does NOT auto-add basePath, so we prepend it
+// manually.
 const SITE_ORIGIN =
   process.env.NEXT_PUBLIC_SITE_ORIGIN ?? 'https://boostcampwm-snu-2026-1.github.io';
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';

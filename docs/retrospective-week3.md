@@ -4,10 +4,10 @@
 
 ## What I shipped this week
 
-2 feature issues, 2 PRs, both green and on `main`. The live site is at <https://boostcampwm-snu-2026-1.github.io/rendermd/>.
+2 feature issues, 2 PRs, both green and on `main`. The live site is at <https://boostcampwm-snu-2026-1.github.io/rendermd-hyuk/>.
 
 - **#8 print-pdf advanced** (PR #47) — print-color-adjust on html+body, orphans/widows, h\*+p break-before, pre wraps in print, box-decoration-break: clone on inline code, page-break-inside: avoid on katex-display, paper-friendly URL annotations via `a[href]::after` (carved out inside `<pre>`/`<code>`)
-- **#9 deploy** (PR #50) — dropped `if: false` from `deploy.yml`, build sets `NEXT_PUBLIC_BASE_PATH=/rendermd`, GH Pages source flipped to `workflow` via `gh api`, first real deploy lives at the URL above
+- **#9 deploy** (PR #50) — dropped `if: false` from `deploy.yml`, build sets `NEXT_PUBLIC_BASE_PATH=/rendermd-hyuk`, GH Pages source flipped to `workflow` via `gh api`, first real deploy lives at the URL above
 
 Plus 2 more follow-up issues filed (#48 wide-math, #41 still open).
 
