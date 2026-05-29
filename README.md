@@ -1,13 +1,13 @@
 # rendermd
 
-[![CI](https://github.com/boostcampwm-snu-2026-1/rendermd/actions/workflows/ci.yml/badge.svg)](https://github.com/boostcampwm-snu-2026-1/rendermd/actions/workflows/ci.yml)
+[![CI](https://github.com/boostcampwm-snu-2026-1/rendermd-hyuk/actions/workflows/ci.yml/badge.svg)](https://github.com/boostcampwm-snu-2026-1/rendermd-hyuk/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](./.nvmrc)
 [![pnpm](https://img.shields.io/badge/pnpm-%3E%3D9-orange)](./package.json)
 
 A static web tool to preview LLM-generated markdown in real time and save it as a PDF.
 
-> **Live:** <https://boostcampwm-snu-2026-1.github.io/rendermd/>
+> **Live:** <https://boostcampwm-snu-2026-1.github.io/rendermd-hyuk/>
 
 > Boostcamp Web & Mobile SNU 2026 — solo project (3-week shared track)
 
